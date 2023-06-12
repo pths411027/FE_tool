@@ -1,26 +1,40 @@
-.button-group {
+.button_group_1 {
+    margin-left: 5%;
     display: flex;
-    overflow: hidden;
-    margin-left: 25%;
-    width: 50%;
+    justify-content: flex-start; 
+    gap: 10px;
 }
 
-.button {
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 0px;
-    width: 50%;  /* 設定按鈕的寬度 */
-    height: 50px;
-    white-space: nowrap;
-    text-align: center;
-    background-color: #f8f8f8;
-    border: none;
-    cursor: pointer;
-    font-weight: bolder;
-    background-color: antiquewhite;
-}
 
-.button.selected {
-    background-color: #007bff;
+.action_button.selected {
+    background: rgb(22, 55, 105);
     color: white;
 }
+
+.action_button {
+    
+    margin-left: 0%;
+    background-color: white;
+    color: black;
+    border-radius: 3em;
+    width: 150px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 1em 2em;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid black;
+    box-shadow: 0 0 0 0 black;
+  }
+  
+  .action_button:hover {
+    background: rgb(22, 55, 105);
+    color: white;
+    transform: translateY(-4px) translateX(-2px);
+    box-shadow: 2px 5px 0 0 black;
+  };
+  
+  .action_button:active {
+    transform: translateY(2px) translateX(1px);
+    box-shadow: 0 0 0 0 black;
+  };

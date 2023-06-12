@@ -2,10 +2,12 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    text-align: center;
+    text-align: left;
     font-family: sans-serif;
   }
   .layer1 h1{
+    margin: 10px;
+    text-align: left;
     font-size: 40px;
   }
 

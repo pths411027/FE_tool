@@ -14,7 +14,8 @@
 }
 
 /* gray, 80% */
-hr {
-    border-top:  solid gray; 
-    width: 80%;
+.fronthr {
+    border-top:   3px solid gray; 
+    margin-left: 5%;
+    width: 90%;
   }
