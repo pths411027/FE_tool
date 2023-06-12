@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import Header from './Header';
+import Sidebar from './Sidebar';
+import Account from './pages/Account';
+import Donation from './pages/Donation';
+
+import "./App.css"
 
 function App() {
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Header toggleSidebar={toggleSidebar} />
+        <div className={`page-container ${showSidebar ? 'sidebar-open' : ''}`}>
+          {showSidebar && <Sidebar />}
+          <div className="content">
+            <Routes>
+              <Route path="/donation" element={<Donation />} />
+              <Route path="*" element={<Account />} />
+            </Routes>
+          </div>
+        </div>
+      </div>
+    </Router>
   );
 }
 

@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%; /* 初始位移，将Sidebar隐藏在屏幕左侧 */
+    width: 15%;
+    height: 100vh;
+    background: rgb(22, 55, 105);
+    font-size: 1.4em;
+    transition: transform 0.3s ease-out; /* 过渡效果，使位移变化平滑 */
+  }
+  
+  .nav {
+    position: relative;
+    margin: 0 15%;
+    text-align: right;
+    top:40%;
+    transform: translateY(-50%);
+    font-weight: bold;
+  }
+  
+  .nav ul {
+    list-style: none;
+  }
+  
+  .nav ul li {
+    margin: 2em 0;
+  }
+  
+  .nav ul li a {
+    line-height: 5em;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.4em;
+    color: white;
+    background-color: rgb(22, 55, 105);
+    display: block;
+    transition: all ease-out 200ms;
+    position: relative;
+  }
+  
+  .nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0.2em;
+    left: 20%;
+    bottom: 0;
+    background-color: white;
+    transition: width 0.3s ease-in-out; /* 设置过渡效果 */
+  }
+  
+  .nav ul li a.active::after {
+    width: 80%; /* 底线宽度逐渐增加到100% */
+    height: 3px;
+  }
+  
+  .nav ul li a:hover {
+    transform: scale(1.2) translateY(-0.2em); /* 字体变大并往上弹一下 */
+  }
+  
+  .nav ul li a:hover::after {
+    width: 75%; /* 悬停时底线宽度逐渐增加到60% */
+    height: 3px;
+  }
