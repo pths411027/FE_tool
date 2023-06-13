@@ -81,7 +81,7 @@ function ListProject() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://0.0.0.0:8081/pm-server/now-main-project');
+      const response = await fetch('http://0.0.0.0:8081/pm-server/main-project');
       const result = await response.json();
       setData(result.main_projects);
     } catch (error) {

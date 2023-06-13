@@ -5,6 +5,7 @@ import Layer2 from "./components/Layer2"
 import ListProject from "./components/ListProject";
 import AddProject from "./components/AddProject";
 import TimelineProject from "./components/TimelineProject";
+import SetProject from "./components/SetProject";
 import Layer6 from "./components/Layer6";
 import React, { createContext, useState, useContext } from 'react';
 import AuthContext from "./components/AuthContext";
@@ -30,7 +31,8 @@ const Account = () => {
         {mode === 'addProject' && <AddProject mode = {mode} setMode = {setMode} />} {/* 根据 mode 值渲染 Layer3Signup 组件 */}
         {mode === 'seeProject' && <ListProject />} {/* 根据 mode 值渲染 Layer3Login 组件 */}
         {mode === 'seeTimeline' && <TimelineProject />} {/* 根据 mode 值渲染 Layer3Login 组件 */}
-        {mode === 'setting' && <Layer6 />} {/* 根据 mode 值渲染 Layer3Login 组件 */}
+        {mode === 'cardProject' && <Layer6 />} {/* 根据 mode 值渲染 Layer3Login 组件 */}
+        {mode === 'setting' && <SetProject />} {/* 根据 mode 值渲染 Layer3Login 组件 */}
         
         </div>
     );

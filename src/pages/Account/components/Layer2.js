@@ -110,6 +110,9 @@ const Layer2 = ({mode, setMode}) => {
       case 'seeTimeline':
         setMode('seeTimeline');
         break;
+      case 'cardProject':
+        setMode('cardProject');
+        break;
       case 'setting':
         setMode('setting');
         break;
@@ -157,6 +160,11 @@ const Layer2 = ({mode, setMode}) => {
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
+          <Menu.Item
+            name="任務卡片"
+            active={mode === 'cardProject'}
+            onClick={() => handleChangeMode('cardProject')}
+          />
           <Menu.Item
             name="系統設定"
             active={mode === 'setting'}

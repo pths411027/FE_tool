@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { async } from 'q';
+import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Dropdown, Modal } from 'semantic-ui-react';
 import ModalProject from './Modal_Project';
 
-
+/*
 const KYCoptions = [
   { key: 'Sam', value: 'Sam', text: 'Sam' },
   { key: 'Peter', value: 'Peter', text: 'Peter' },
@@ -13,11 +14,12 @@ const KYCoptions = [
   { key: 'Polo', value: 'Polo', text: 'Polo' },
   { key: 'Peggy', value: 'Peggy', text: 'Peggy' },
   { key: 'James', value: 'James', text: 'James' },
-  { key: 'Charlie', value: 'Charlie', text: 'Charlie' },
+  { key: 'Charlie', value: 'Peggy', text: 'Peggy' },
 
   
   // ... 省略其他州
 ];
+*/
 
 const options = [
   { key: 'CICD', value: 'CICD', text: 'CICD' },
@@ -39,6 +41,26 @@ function AddProject({mode, setMode}) {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalFinish, setmMdalFinish] = useState(false);
+
+  const [KYCoptions, setKYCoptions] = useState([]);
+ 
+
+  useEffect(()=>{
+    fetchMemberList();
+  }, [KYC]);
+
+  const fetchMemberList = async () =>{
+    try {
+      const response = await fetch('http://0.0.0.0:8081/pm-server/member-list');
+      const result = await response.json();
+      setKYCoptions(result.member.map(member => (
+        { key: member, value: member, text: member }
+      )));
+    }
+    catch (error){
+      console.error('There was a fetch problem the data: ', error)
+    }
+  };
   
 
   const buttons_1 = [
@@ -73,9 +95,6 @@ function AddProject({mode, setMode}) {
     }
   ];
   
-
-
-
 
   const handleFormSubmit = () => {
     setModalOpen(true);
@@ -113,7 +132,7 @@ function AddProject({mode, setMode}) {
       extraInputs,
     };
 
-    fetch('http://0.0.0.0:8081/pm-server/main-project', {
+    fetch('http://0.0.0.0:8081/pm-server/add-project', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -162,7 +181,6 @@ function AddProject({mode, setMode}) {
           required
         />
 
-
         <Form.Field required width={4}>
           <label>負責KYC</label>
           <Dropdown
@@ -171,10 +189,9 @@ function AddProject({mode, setMode}) {
             search
             selection
             options={KYCoptions}
-            onChange={(e, { value }) => setTag(value)}
+            onChange={(e, { value }) => setKYC(value)}
           />
         </Form.Field>
-        
         <Form.Field required width={4}>
           <label>標籤</label>
           <Dropdown
@@ -272,56 +289,8 @@ function AddProject({mode, setMode}) {
         modal_title="已經新增任務"
         modal_des="系統已加入此任務!"
         buttons={buttons_2}
-    />
-
-    
-    
-   
-    
-    
+    />    
     </div>
   );
 }
-
 export default AddProject;
-/*
-<Modal basic open={modalOpen} onClose={closeModalOpen} size='small'>
-<Modal.Header>
-  <i className="archive icon"></i>
-  確認新增任務ㄇ？
-</Modal.Header>
-<Modal.Content>
-  <p>系統將新增此需求進入訊息列表，請確認資料是否填正確！</p>
-  <p>By Ops BI</p>
-</Modal.Content>
-<Modal.Actions>
-  <Button basic color='red' inverted onClick={closeModalOpen}>
-    <i className="remove icon"></i>
-    No
-  </Button>
-  <Button color='green' inverted onClick={handleConfirm}>
-    <i className="checkmark icon"></i>
-    Yes
-  </Button>
-</Modal.Actions>
-</Modal>
-
-<Modal basic open={modalFinish} onClose={closeModalFinish} size='small'>
-        <Modal.Header>
-          <i className="archive icon"></i>
-          已經新增任務
-        </Modal.Header>
-        <Modal.Content>
-          <p>系統將新增此需求進入訊息列表，請確認資料是否填正確！</p>
-          <p>By Ops BI</p>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button color='green' inverted onClick={closeModalFinish}>
-            <i className="checkmark icon"></i>
-            Yes
-          </Button>
-        </Modal.Actions>
-      </Modal>
-
-
-*/
