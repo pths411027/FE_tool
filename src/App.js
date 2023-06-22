@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Account from './pages/Account';
-import Donation from './pages/Donation';
+import Workload from './pages/Workload'
 
 import "./App.css";
 
@@ -17,7 +17,7 @@ function App() {
           <Sidebar />
           <div className="content">
             <Routes>
-              <Route path="/donation" element={<Donation />} />
+              <Route path="/workload" element={<Workload />} />
               <Route path="*" element={<Account />} />
             </Routes>
           </div>

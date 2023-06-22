@@ -1,0 +1,21 @@
+*{
+    font-family: sans-serif;
+}
+
+.header-container{
+    position: relative;
+    height:16vh;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1em;
+    background-color: #fff4b4;
+}
+
+/* gray, 80% */
+.fronthr {
+    border-top:   3px solid gray; 
+    margin-left: 5%;
+    width: 90%;
+  }

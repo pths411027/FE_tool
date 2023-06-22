@@ -13,7 +13,7 @@ function Sidebar() {
   // 在这里根据你的路由路径规则判断当前页面是否为活动状态
   return (
     currentLocation.pathname.startsWith('/account') ||
-    currentLocation.pathname.startsWith('/donation') ||
+    currentLocation.pathname.startsWith('/workload') ||
     currentLocation.pathname.startsWith('/A') ||
     currentLocation.pathname.startsWith('/B') ||
     currentLocation.pathname.startsWith('/C')
@@ -30,8 +30,8 @@ function Sidebar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/donation" activeClassName="active" isActive={isActive}>
-              我的任務
+            <NavLink to="/workload" activeClassName="active" isActive={isActive}>
+              Workload
             </NavLink>
           </li>
           <li>
