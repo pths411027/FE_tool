@@ -1,139 +1,298 @@
 
 
 
+import React, { useState, useEffect } from 'react';
+import { Form, Select, Button, Dropdown, Modal } from 'semantic-ui-react';
+import ModalProject from './Modal_Project';
+
 /*
+const KYCoptions = [
+  { key: 'Sam', value: 'Sam', text: 'Sam' },
+  { key: 'Peter', value: 'Peter', text: 'Peter' },
+  { key: 'Marcus', value: 'Marcus', text: 'Marcus' },
+  { key: 'David', value: 'David', text: 'David' },
+  { key: 'Shana', value: 'Shana', text: 'Shana' },
+  { key: 'Sonny', value: 'Sonny', text: 'Sonny' },
+  { key: 'Polo', value: 'Polo', text: 'Polo' },
+  { key: 'Peggy', value: 'Peggy', text: 'Peggy' },
+  { key: 'James', value: 'James', text: 'James' },
+  { key: 'Charlie', value: 'Peggy', text: 'Peggy' },
 
-
-function Layer3() {
-    const data = [
-        { name: '腳本標寫', registrationDate: 'September 14, 2013', email: 'gitlab 自動部署、測試', premiumPlan: 'CICD', color: 'rgb(30, 123, 162)'},
-        { name: 'UI設計', registrationDate: 'January 11, 2014', email: '表單設計、標籤頁設計', premiumPlan: 'FE', color: 'rgb(250, 197, 93)'},
-        { name: '後端工程', registrationDate: 'May 11, 2014', email: 'API設計', premiumPlan: 'BE', color: 'rgb(237, 106, 95)'},
-      ];
-
-  return (
-    <table className="ui red celled striped table" style={{marginLeft: "5%", width:"60%"}}>
-      <thead>
-            <tr><th colspan="5">
-            任務列表
-            </th>
-        </tr>
-    </thead>
-      <thead>
-        <tr>
-          <th>開關</th>
-          <th>任務名稱</th>
-          <th>任務時間</th>
-          <th>任務詳情</th>
-          <th>標籤</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((item, index) => (
-          <tr key={index}>
-            <td className="collapsing">
-              <div className="ui fitted slider checkbox">
-                <input type="checkbox" /> <label></label>
-              </div>
-            </td>
-            <td>{item.name}</td>
-            <td>{item.registrationDate}</td>
-            <td>{item.email}</td>
-            
-            <td><span style={{backgroundColor: item.color, padding: '0.5em', color:"white", fontWeight:"900", borderRadius: '5px', textShadow: '1px 1px 2px black'}}>{item.premiumPlan}</span></td>
-
-          </tr>
-        ))}
-      </tbody>
-      <tfoot className="full-width">
-        <tr>
-          <th></th>
-          <th colSpan="4">
-            <div className="ui right floated small primary labeled icon button">
-              <i className="user icon"></i> Add User
-            </div>
-            <div className="ui small button">
-              Approve
-            </div>
-            <div className="ui small disabled button">
-              Approve All
-            </div>
-          </th>
-        </tr>
-      </tfoot>
-    </table>
-  );
-}
-
-export default Layer3;
+  
+  // ... 省略其他州
+];
 */
 
-import "./Layer2.css"
-import React, { useState, useEffect } from "react";
-import 'semantic-ui-css/semantic.min.css';
+const options = [
+  { key: 'CICD', value: 'CICD', text: 'CICD' },
+  { key: 'BE', value: 'BE', text: 'BE' },
+  { key: 'FE', value: 'FE', text: 'FE' },
+  { key: 'PM', value: 'PM', text: 'PM' },
+  
+  // ... 省略其他州
+];
 
-function ListProject() {
-  const [data, setData] = useState([]);
+function ItemList({mode, setMode}) {
+  const [projectName, setProjectName] = useState('');
+  const [KYC, setKYC] = useState('');
+  const [tag, setTag] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDay, setstartDay] = useState('');
+  const [endDay, setendDay] = useState('');
+  const [extraInputs, setExtraInputs] = useState([]);
 
-  useEffect(() => {
-    fetchData(); // 在组件挂载时获取数据
-  }, []);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalFinish, setmMdalFinish] = useState(false);
 
-  const fetchData = async () => {
+  const [KYCoptions, setKYCoptions] = useState([]);
+ 
+
+  useEffect(()=>{
+    fetchMemberList();
+  }, [KYC]);
+
+  const fetchMemberList = async () =>{
     try {
-      const response = await fetch('http://0.0.0.0:8081/pm-server/main-project');
+      const response = await fetch('http://0.0.0.0:8081/pm-server/member-list');
       const result = await response.json();
-      setData(result.main_projects);
-    } catch (error) {
-      console.error('There was a problem fetching the data: ', error);
+      setKYCoptions(result.member.map(member => (
+        { key: member, value: member, text: member }
+      )));
+    }
+    catch (error){
+      console.error('There was a fetch problem the data: ', error)
     }
   };
+  
+
+  const buttons_1 = [
+    {
+      color: 'red',
+      inverted: true,
+      icon: 'remove',
+      text: 'No',
+      onClick: () => setModalOpen(false),
+    },
+    {
+      color: 'green',
+      inverted: true,
+      icon: 'checkmark',
+      text: 'Yes',
+      onClick: () => {
+        setModalOpen(false);
+        handleConfirm();
+      },
+    },
+  ];
+  const buttons_2 = [
+    {
+      color: 'green',
+      inverted: true,
+      icon: 'checkmark',
+      text: 'Yes',
+      onClick: () => {
+        setmMdalFinish(false);
+        setMode('seeProject');
+      },
+    }
+  ];
+  
+
+  const handleFormSubmit = () => {
+    setModalOpen(true);
+  };
+
+
+
+  // event
+  const handleExtraInputChange_event = (index, fieldIndex, event) => {
+    const newInputs = [...extraInputs];
+    newInputs[index][fieldIndex] = event.target.value;
+    setExtraInputs(newInputs);
+  };
+  // value
+  const handleExtraInputChange_value = (index, fieldIndex, value) => {
+    const newInputs = [...extraInputs];
+    newInputs[index][fieldIndex] = value.value;
+    setExtraInputs(newInputs);
+  };
+
+
+  const handleAddInput = () => {
+    setExtraInputs([...extraInputs, ['', '', '']]);
+  };
+
+
+  const handleConfirm = () => {
+    const payload = {
+      projectName,
+      KYC,
+      tag,
+      description,
+      startDay,
+      endDay,
+      extraInputs,
+    };
+
+    fetch('http://0.0.0.0:8081/pm-server/add-project', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+       
+      },
+      body: JSON.stringify(payload)
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+        
+      }
+      setModalOpen(false)
+      setmMdalFinish(true)
+      return response.json();
+      
+    }).then(data => {
+      console.log(data);
+    }).catch(error => {
+      console.error('There was a problem with the fetch operation: ', error);
+    });
+  };
+
 
   return (
-    <table className="ui red celled striped table" style={{marginLeft: "5%", width:"60%"}}>
-      <thead>
-        <tr>
-          <th colspan="5">任務列表</th>
-        </tr>
-      </thead>
-      <thead>
-        <tr>
-          <th style={{width: "20%"}}>任務名稱</th>
-          <th style={{width: "15%"}}>開始時間</th>
-          <th style={{width: "15%"}}>結束時間</th>
-          <th style={{width: "30%"}}>任務詳情</th>
-          <th style={{width: "15%"}}>標籤</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((item, index) => (
-          <tr key={index}>
-            <td>{item.project_name}</td>
-            <td>{item.start_day}</td>
-            <td>{item.end_day}</td>
-            <td>{item.description}</td>
-            <td>
-              <span
-                style={{
-                  backgroundColor: item.color,
-                  paddingTop: '0.3em',
-                  paddingBottom: '0.3em',
-                  paddingLeft: '0.7em',
-                  paddingRight: '0.7em',
-                  color: 'black',
-                  fontWeight: '900',
-                  borderRadius: '8px',
-                  
-                }}
-              >
-                {item.tag}
-              </span>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div>
+    
+    <Form onSubmit={handleFormSubmit} style={{
+        marginLeft: '5%', 
+        width: '60%', 
+        backgroundColor: 'rgb(249, 250, 251)', 
+        border: '1px solid rgb(234, 234, 235)', 
+        borderRadius: '10px',
+        padding: '20px',
+        marginTop:'14px'
+        
+      }}>
+    <h4 className="ui dividing header">新增任務</h4>
+      <Form.Group widths='equal'>
+        <Form.Input
+          label="任務名稱"
+          name="projectName"
+          placeholder="任務名稱"
+          value={projectName}
+          onChange={e => setProjectName(e.target.value)}
+          width={10}
+          required
+        />
+
+        <Form.Field required width={4}>
+          <label>負責KYC</label>
+          <Dropdown
+            placeholder='KYC'
+            fluid
+            search
+            selection
+            options={KYCoptions}
+            onChange={(e, { value }) => setKYC(value)}
+          />
+        </Form.Field>
+        <Form.Field required width={4}>
+          <label>標籤</label>
+          <Dropdown
+            placeholder='State'
+            fluid
+            search
+            selection
+            options={options}
+            onChange={(e, { value }) => setTag(value)}
+          />
+        </Form.Field>
+      </Form.Group>
+      <Form.Group widths='equal'>
+        <Form.Input
+            label="詳述"
+            name="description"
+            placeholder="詳述"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            width={10}
+            required
+          />
+        <Form.Input
+            label="開始日期"
+            name="date"
+            type="date"
+            value={startDay}
+            onChange={e => setstartDay(e.target.value)}
+            width={4}
+            required
+          />
+        <Form.Input
+            label="結束日期"
+            name="date"
+            type="date"
+            value={endDay}
+            onChange={e => setendDay(e.target.value)}
+            width={4}
+            required
+          />
+      </Form.Group>
+      <Button 
+        onClick={handleAddInput} 
+        size='large' 
+        style={{height:"40px", width:"150px", marginBottom: "10px"}}  // 添加 marginTop 調整按鈕與上一個元素的間距
+        >
+        新增欄位
+      </Button>
+        {extraInputs.length > 0 && extraInputs.map((input, i) => (
+          <Form.Group widths='equal' key={i}>
+              <Form.Input
+              label={`子任務名稱 ${i + 1}`}
+              placeholder="子任務名稱"
+              value={input[0]}
+              onChange={e => handleExtraInputChange_event(i, 0, e)}
+              width={2}  // 調整 input 欄位的長度
+              required
+              
+              />
+              <Form.Input
+              label="詳述"  // 使用模板字符串添加索引到 label 中
+              placeholder="詳述"
+              value={input[1]}
+              onChange={e => handleExtraInputChange_event(i, 1, e)}
+              width={5}  // 調整 input 欄位的長度
+
+              />
+              <Form.Select
+                fluid
+                label="標籤"
+                placeholder="標籤"
+                options={options}
+                value={input[2]}
+                onChange={(e, { value }) => handleExtraInputChange_value(i, 2, { value })}
+                width={2}
+                required
+              />
+
+          </Form.Group>
+      ))}
+      <Button type='submit' size='large' style={{height:"40px", width:"150px",marginTop: "10px"}}>
+        提交
+      </Button>
+    </Form>
+    <ModalProject
+        modalOpen={modalOpen}
+        closeModalOpen={() => setModalOpen(false)}
+        modal_title="確認新增任務？"
+        modal_des="系統將新增此需求進入訊息列表，請確認資料是否填正確！"
+        buttons={buttons_1}
+      />
+    <ModalProject
+        modalOpen={modalFinish}
+        closeModalOpen={() => setmMdalFinish(false)}
+        modal_title="已經新增任務"
+        modal_des="系統已加入此任務!"
+        buttons={buttons_2}
+    />    
+    </div>
   );
 }
-
-export default ListProject;
+export default ItemList;
