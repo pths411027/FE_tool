@@ -1,59 +1,73 @@
+import { async } from 'q';
 import React, { useState, useEffect } from 'react';
-import { Form, Select, Button, Dropdown, Modal } from 'semantic-ui-react';
+import { Form, Select, Button, Dropdown, Modal, Label} from 'semantic-ui-react';
 import ModalProject from './Modal_Project';
 
-/*
-const KYCoptions = [
-  { key: 'Sam', value: 'Sam', text: 'Sam' },
-  { key: 'Peter', value: 'Peter', text: 'Peter' },
-  { key: 'Marcus', value: 'Marcus', text: 'Marcus' },
-  { key: 'David', value: 'David', text: 'David' },
-  { key: 'Shana', value: 'Shana', text: 'Shana' },
-  { key: 'Sonny', value: 'Sonny', text: 'Sonny' },
-  { key: 'Polo', value: 'Polo', text: 'Polo' },
-  { key: 'Peggy', value: 'Peggy', text: 'Peggy' },
-  { key: 'James', value: 'James', text: 'James' },
-  { key: 'Charlie', value: 'Peggy', text: 'Peggy' },
+// 顏色
+const colors = ["red", "orange", "yellow", "olive", "green", "teal", "blue", "violet", "purple", "pink", "brown", "grey", "black"];
+const color_options = colors.map(color => {
+  return { 
+    key: color, 
+    value: color, 
+    text: (
+      <span>
+        <Label circular color={color} empty style={{marginRight:"10px"}}/> {color}
+      </span>
+    ), 
+    style:{fontWeight:"bold"}
+  }
+});
+color_options.unshift({
+  key: '', 
+  value: '', 
+  text: (
+    <span>
+      Please Select...
+    </span> 
+  ), 
+  style:{fontWeight:"bold"}
+});
 
-  
-  // ... 省略其他州
-];
-*/
+// 可更改選項/不可更改選項
+const revise_options = [
+  { key: 'yes', value: true, text: '可更改選項' },
+  { key: 'no', value: false, text: '不可更改選項' },
 
-const options = [
-  { key: 'CICD', value: 'CICD', text: 'CICD' },
-  { key: 'BE', value: 'BE', text: 'BE' },
-  { key: 'FE', value: 'FE', text: 'FE' },
-  { key: 'PM', value: 'PM', text: 'PM' },
-  
-  // ... 省略其他州
 ];
+
+// 資料類型選項
+const col_type_options = [
+  { key: 'int', value: 'int', text: '數字' },
+  { key: 'str', value: 'str', text: '文字' },
+
+];
+
 
 function AddProject({mode, setMode}) {
   const [projectName, setProjectName] = useState('');
-  const [KYC, setKYC] = useState('');
-  const [tag, setTag] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDay, setstartDay] = useState('');
-  const [endDay, setendDay] = useState('');
-  const [extraInputs, setExtraInputs] = useState([]);
+  const [team, setTeam] = useState('');
+  const [KPI, setKPI] = useState('');
+  const [optionInputs, setOptionInputs] = useState([]);
+  const [customerInputs, setCustomerInputs] = useState([]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalFinish, setmMdalFinish] = useState(false);
+  const [modalError, setmMdalError] = useState(false);
+  const [Error, setError] = useState('');
 
-  const [KYCoptions, setKYCoptions] = useState([]);
+  const [Teamoptions, setTeamoptions] = useState([]);
  
 
   useEffect(()=>{
-    fetchMemberList();
-  }, [KYC]);
+    fetchTeamrList();
+  }, [team]);
 
-  const fetchMemberList = async () =>{
+  const fetchTeamrList = async () =>{
     try {
-      const response = await fetch('http://0.0.0.0:8081/pm-server/member-list');
+      const response = await fetch('http://0.0.0.0:8081/work_load/team-list');
       const result = await response.json();
-      setKYCoptions(result.member.map(member => (
-        { key: member, value: member, text: member }
+      setTeamoptions(result.team.map(team => (
+        { key: team, value: team, text: team }
       )));
     }
     catch (error){
@@ -76,7 +90,6 @@ function AddProject({mode, setMode}) {
       icon: 'checkmark',
       text: 'Yes',
       onClick: () => {
-        setModalOpen(false);
         handleConfirm();
       },
     },
@@ -89,76 +102,111 @@ function AddProject({mode, setMode}) {
       text: 'Yes',
       onClick: () => {
         setmMdalFinish(false);
-        setMode('seeProject');
+        setMode('none')
       },
     }
   ];
+  const buttons_3 = [
+    {
+      color: 'green',
+      inverted: true,
+      icon: 'checkmark',
+      text: 'Yes',
+      onClick: () => {
+        setmMdalError(false);
+      },
+    }
+  ];
+
+
   
 
   const handleFormSubmit = () => {
     setModalOpen(true);
   };
 
-
-
   // event
-  const handleExtraInputChange_event = (index, fieldIndex, event) => {
-    const newInputs = [...extraInputs];
+  const handleExtraInputChange_event = (index, fieldIndex, event, myInputs, setInput) => {
+    const newInputs = [...myInputs];
     newInputs[index][fieldIndex] = event.target.value;
-    setExtraInputs(newInputs);
+    setInput(newInputs);
   };
   // value
-  const handleExtraInputChange_value = (index, fieldIndex, value) => {
-    const newInputs = [...extraInputs];
+  const handleExtraInputChange_value = (index, fieldIndex, value,  myInputs, setInput) => {
+    const newInputs = [...myInputs];
     newInputs[index][fieldIndex] = value.value;
-    setExtraInputs(newInputs);
+    setInput(newInputs);
   };
 
+  // 增加新的選項
+  const handleAddOptionInput = () => {
+    setOptionInputs([...optionInputs, ['', '', '']]);
+  };
 
-  const handleAddInput = () => {
-    setExtraInputs([...extraInputs, ['', '', '']]);
+  // 增加新的欄位
+  const handleAddCustomerInput = () => {
+    setCustomerInputs([...customerInputs, ['', '', '']]);
+  };
+
+  // 刪除選項
+  const handleDeleteOptionInput = (index) => {
+    const newExtraInputs = [...optionInputs];
+    newExtraInputs.splice(index, 1);
+    setOptionInputs(newExtraInputs);
+  };
+
+  // 刪除選項
+  const handleDeleteCustomerInput = (index) => {
+    const newExtraInputs = [...customerInputs];
+    newExtraInputs.splice(index, 1);
+    setCustomerInputs(newExtraInputs);
   };
 
 
   const handleConfirm = () => {
     const payload = {
       projectName,
-      KYC,
-      tag,
-      description,
-      startDay,
-      endDay,
-      extraInputs,
+      team,
+      KPI,
+      optionInputs,
+      customerInputs,
     };
 
-    fetch('http://0.0.0.0:8081/pm-server/add-project', {
+    fetch('http://0.0.0.0:8081/work_load/add-project', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
-       
+      
       },
       body: JSON.stringify(payload)
     }).then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-        
+      // 回傳成功
+      if (response.ok){
+        setModalOpen(false)
+        setmMdalFinish(true)
       }
-      setModalOpen(false)
-      setmMdalFinish(true)
-      return response.json();
-      
-    }).then(data => {
-      console.log(data);
-    }).catch(error => {
-      console.error('There was a problem with the fetch operation: ', error);
-    });
+      else{
+        return response.json().then(err => {
+          setError(err.detail)
+          setModalOpen(false)
+          setmMdalError(true)
+        });
+      }}
+      ).then(data => {
+        console.log(data);
+      }).catch(error => {
+        setModalOpen(false)
+        setmMdalError(true)
+        console.error('There was a problem with the fetch operation: ', error);
+      });
+
+
   };
 
 
   return (
     <div>
-    
-    <Form onSubmit={handleFormSubmit} style={{
+    <Form  onSubmit={handleFormSubmit} style={{
         marginLeft: '5%', 
         width: '60%', 
         backgroundColor: 'rgb(249, 250, 251)', 
@@ -168,109 +216,154 @@ function AddProject({mode, setMode}) {
         marginTop:'14px'
         
       }}>
-    <h4 className="ui dividing header">新增任務</h4>
+    <h2 className="ui dividing header" style={{marginBottom:"%"}}>創建專案</h2>
       <Form.Group widths='equal'>
         <Form.Input
-          label="任務名稱"
+          label="專案名稱"
           name="projectName"
-          placeholder="任務名稱"
+          placeholder="專案名稱"
           value={projectName}
           onChange={e => setProjectName(e.target.value)}
-          width={10}
+          width={9}
           required
         />
 
         <Form.Field required width={4}>
-          <label>負責KYC</label>
+          <label>負責團隊</label>
           <Dropdown
-            placeholder='KYC'
+            placeholder='負責團隊'
             fluid
             search
             selection
-            options={KYCoptions}
-            onChange={(e, { value }) => setKYC(value)}
+            options={Teamoptions}
+            onChange={(e, { value }) => setTeam(value)}
+            style={{fontWeight:"bold"}}
           />
         </Form.Field>
-        <Form.Field required width={4}>
-          <label>標籤</label>
-          <Dropdown
-            placeholder='State'
-            fluid
-            search
-            selection
-            options={options}
-            onChange={(e, { value }) => setTag(value)}
-          />
-        </Form.Field>
+        <Form.Input
+          label="KPI"
+          name="KPI"
+          placeholder="KPI"
+          value={KPI}
+          onChange={e => setKPI(e.target.value)}
+          width={2}
+          required
+        />
       </Form.Group>
-      <Form.Group widths='equal'>
-        <Form.Input
-            label="詳述"
-            name="description"
-            placeholder="詳述"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            width={10}
-            required
-          />
-        <Form.Input
-            label="開始日期"
-            name="date"
-            type="date"
-            value={startDay}
-            onChange={e => setstartDay(e.target.value)}
-            width={4}
-            required
-          />
-        <Form.Input
-            label="結束日期"
-            name="date"
-            type="date"
-            value={endDay}
-            onChange={e => setendDay(e.target.value)}
-            width={4}
-            required
-          />
-      </Form.Group>
+      
       <Button 
-        onClick={handleAddInput} 
+        onClick={handleAddOptionInput} 
+        color='green'
         size='large' 
-        style={{height:"40px", width:"150px", marginBottom: "10px"}}  // 添加 marginTop 調整按鈕與上一個元素的間距
+        style={{height:"40px", width:"180px", marginBottom: "10px"}}  // 添加 marginTop 調整按鈕與上一個元素的間距
         >
-        新增欄位
+        新增回填選項
       </Button>
-        {extraInputs.length > 0 && extraInputs.map((input, i) => (
+        {optionInputs.length > 0 && optionInputs.map((input, i) => (
           <Form.Group widths='equal' key={i}>
+            
               <Form.Input
-              label={`子任務名稱 ${i + 1}`}
+              label={` 回填選項 ${i + 1}`}
               placeholder="子任務名稱"
               value={input[0]}
-              onChange={e => handleExtraInputChange_event(i, 0, e)}
-              width={2}  // 調整 input 欄位的長度
+              onChange={e => handleExtraInputChange_event(i, 0, e, optionInputs, setOptionInputs)}
+              width={3}  // 調整 input 欄位的長度
               required
-              
-              />
-              <Form.Input
-              label="詳述"  // 使用模板字符串添加索引到 label 中
-              placeholder="詳述"
-              value={input[1]}
-              onChange={e => handleExtraInputChange_event(i, 1, e)}
-              width={5}  // 調整 input 欄位的長度
-
+              style={{fontWeight:"bold"}}
+             
               />
               <Form.Select
                 fluid
-                label="標籤"
-                placeholder="標籤"
-                options={options}
-                value={input[2]}
-                onChange={(e, { value }) => handleExtraInputChange_value(i, 2, { value })}
-                width={2}
+                search
+                label="答案類型"
+                placeholder="可更改選項/不可更改選項"
+                options={revise_options}
+                value={input[1]}
+                onChange={(e, { value }) => handleExtraInputChange_value(i, 1, { value }, optionInputs, setOptionInputs)}
+                width={3}
                 required
+                style={{fontWeight:"bold"}}
               />
+              <Form.Select
+                fluid
+                label="標籤顏色"
+                placeholder="標籤顏色"
+                options={color_options}
+                value={input[2]}
+                onChange={(e, { value }) => handleExtraInputChange_value(i, 2, { value }, optionInputs, setOptionInputs)}
+                width={3}
+                required
+                style={{fontWeight:"bold"}}
+              />
+              <Form.Field width={1} style={{ display: 'flex', alignItems: 'flex-end'}}>
+                <Button
+                  color='red'
+                  fluid
+                  onClick={() => handleDeleteOptionInput(i)}
+                  style={{fontWeight:"bold"}}
+                >
+                  Delete
+                </Button>
+              </Form.Field>
 
+              
           </Form.Group>
       ))}
+      <br/>
+      <Button 
+        onClick={handleAddCustomerInput} 
+        color='blue'
+        size='large' 
+        style={{height:"40px", width:"180px", marginBottom: "10px"}}  // 添加 marginTop 調整按鈕與上一個元素的間距
+        >
+        新增客製化欄位
+      </Button>
+        {customerInputs.length > 0 && customerInputs.map((input, i) => (
+          <Form.Group widths='equal' key={i}>
+              <Form.Input
+                label={` 欄位名稱 ${i + 1}`}
+                placeholder="欄位名稱"
+                value={input[0]}
+                onChange={e => handleExtraInputChange_event(i, 0, e, customerInputs, setCustomerInputs)}
+                width={3}  // 調整 input 欄位的長度
+                required
+                style={{fontWeight:"bold"}}
+              
+              />
+              <Form.Select
+                fluid
+                label="資料類別"
+                placeholder="資料類別"
+                options={col_type_options}
+                value={input[1]}
+                onChange={(e, { value }) => handleExtraInputChange_value(i, 1, { value }, customerInputs, setCustomerInputs)}
+                width={3}
+                required
+                style={{fontWeight:"bold"}}
+              />
+              <Form.Input
+                label={` 註解`}
+                placeholder="註解"
+                value={input[2]}
+                onChange={e => handleExtraInputChange_event(i, 2, e, customerInputs, setCustomerInputs)}
+                width={3}  // 調整 input 欄位的長度
+                required
+                style={{fontWeight:"bold"}}
+              />
+              
+              <Form.Field width={1} style={{ display: 'flex', alignItems: 'flex-end'}}>
+                <Button
+                  color='red'
+                  fluid
+                  onClick={() => handleDeleteCustomerInput(i)}
+                  style={{fontWeight:"bold"}}
+                >
+                  Delete
+                </Button>
+              </Form.Field>
+          </Form.Group>
+      ))}
+      <br/>
       <Button type='submit' size='large' style={{height:"40px", width:"150px",marginTop: "10px"}}>
         提交
       </Button>
@@ -288,6 +381,13 @@ function AddProject({mode, setMode}) {
         modal_title="已經新增任務"
         modal_des="系統已加入此任務!"
         buttons={buttons_2}
+    />
+    <ModalProject
+        modalOpen={modalError}
+        closeModalOpen={() => setmMdalError(false)}
+        modal_title="新增失敗任務"
+        modal_des={`${Error}`}
+        buttons={buttons_3}
     />    
     </div>
   );

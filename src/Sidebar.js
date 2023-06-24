@@ -31,7 +31,7 @@ function Sidebar() {
           </li>
           <li>
             <NavLink to="/workload" activeClassName="active" isActive={isActive}>
-              Workload
+              工作任務
             </NavLink>
           </li>
           <li>
