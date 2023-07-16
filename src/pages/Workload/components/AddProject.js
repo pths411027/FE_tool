@@ -67,7 +67,7 @@ function AddProject({mode, setMode}) {
       const response = await fetch('http://0.0.0.0:8081/work_load/team-list');
       const result = await response.json();
       setTeamoptions(result.team.map(team => (
-        { key: team, value: team, text: team }
+        { key: team.teamName, value: team.teamName, text: team.teamName }
       )));
     }
     catch (error){
@@ -176,7 +176,6 @@ function AddProject({mode, setMode}) {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
-      
       },
       body: JSON.stringify(payload)
     }).then(response => {

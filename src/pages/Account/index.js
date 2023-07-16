@@ -19,7 +19,7 @@ import "./index.css"
 
 const Account = () => {
     const [mode, setMode] = useState('none'); // 預設為登入模式
-   
+    
 
     return (
         <div>
