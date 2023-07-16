@@ -1,11 +1,9 @@
-
-
-
 import "./Layer2.css"
 import React, { useState, useEffect } from "react";
 import 'semantic-ui-css/semantic.min.css';
-import { Dropdown, Input, Button, Label, Header, Modal, Icon, Card, Grid, Menu, Form, Checkbox } from 'semantic-ui-react';
+import { Dropdown, Input, Button, Label, Header, Modal, Icon, Card, Grid, Menu, Form, Checkbox, Image, Divider, Table } from 'semantic-ui-react';
 import ModalProject from "./Modal_Project";
+
 // 圖片
 import man from "./page/man.png"
 import oldman from "./page/old-man.png"
@@ -61,21 +59,9 @@ const emailOptions = [
 
 function Member_Team() {
   //const [data, setData] = useState([]);
-  /*
-  useEffect(() => {
-    fetchData(); // 在组件挂载时获取数据
-  }, []);
   
-  const fetchData = async () => {
-    try {
-      const response = await fetch('http://0.0.0.0:8081/pm-server/main-project');
-      const result = await response.json();
-      setData(result.main_projects);
-    } catch (error) {
-      console.error('There was a problem fetching the data: ', error);
-    }
-  };
-  */
+  
+  
   
   const [activeItem, setActiveItem] = useState('TeamItem');
   const [openAddTeamModal, setOpenAddTeamModal] = useState(false);
@@ -91,6 +77,8 @@ function Member_Team() {
   const [isTeamChecked, setIsTeamChecked] = useState(false);
   const [isMemberChecked, setIsMemberChecked] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openCardAdd, setOpenCardAdd] = useState(false);
+  
 
   // add member
   const [memberName, setMemberName] = useState('');
@@ -98,6 +86,52 @@ function Member_Team() {
   const [memberEmail, setMemberEmail] = useState('');
   const [memberEmailType, setMemberEmailType] = useState('@gmail.com');
   const [memberLevel, setMemberLevel] = useState('');
+
+  const [teamLeader, setTeamLeader] = useState([]);
+  const [teamMember, setTeamMember] = useState([]);
+  const [allMember, setAllMember] = useState([]);
+  const [teamCard, setTeamCard] = useState([]);
+
+  const [modalKey, setModalKey] = useState(Date.now());
+
+  
+
+  
+  
+
+
+  useEffect(() => {
+    fetchAddProjectData(); 
+  }, [activeItem, openAddTeamModal, openAddMemberModal]);
+  
+  const fetchAddProjectData = async () => {
+    if(activeItem === 'TeamItem') {
+      try{
+        const response_leader = await fetch('http://0.0.0.0:8081/work_load/member-list?level=Leader');
+        const response_member = await fetch('http://0.0.0.0:8081/work_load/member-list?level=Junior');
+        const response_team = await fetch('http://0.0.0.0:8081/work_load/team-list');
+        const result_leader = await response_leader.json();
+        const result_member = await response_member.json();
+        const result_team = await response_team.json();
+        const free_leaders = result_leader.member_list.filter(member => member.teamName === '未定');
+        const free_member = result_member.member_list.filter(member => member.teamName === '未定');
+
+        setTeamLeader(free_leaders);
+        setTeamMember(free_member);
+        setTeamCard(result_team.team);
+      } catch(error){
+        console.error('There was a problem fetching the data: ', error);
+      }
+    }else{
+      try{
+        const response = await fetch('http://0.0.0.0:8081/work_load/member-list?level=All');
+        const result = await response.json();
+        setAllMember(result.member_list);
+      } catch(error){
+        console.error('There was a problem fetching the data: ', error);
+      }
+    }
+  };
 
   const buttons_2 = [
     {
@@ -163,18 +197,89 @@ function Member_Team() {
   const handleAddMemberClick = () => {
     setOpenAddMemberModal(true)
   }
+  
+  
+  const [ManagerOptions, setManagerOptions] = useState([{ key: '', value: '', text: 'Select...' }]);
+  const [MemberOptions, setMemberOptions] = useState([{ key: '', value: '', text: 'Select...' }]);
+  const [selectedMember, setSelectedMember] = useState([]);
 
-  const ManagerOptions = [
-    { key: '', value: '', text: 'Select...' },
-    { key: 'Sonny', value: 'Sonny', text: 'Sonny',  image: { avatar: true, src: man }, },
-    { key: 'David', value: 'David', text: 'David',  image: { avatar: true, src:  hairman}, },
-    { key: 'Polo', value: 'Polo', text: 'Polo',  image: { avatar: true, src: youngman }, },
-    { key: 'Shana', value: 'Shana', text: 'Shana',  image: { avatar: true, src: hatwoman }, },
-    { key: 'Charlie', value: 'Charlie', text: 'Charlie',  image: { avatar: true, src: hatman }, },
-    { key: 'Marcus', value: 'Marcus', text: 'Marcus',  image: { avatar: true, src: oldman }, },
-    { key: 'Amber', value: 'Amber', text: 'Amber',  image: { avatar: true, src: woman }, },
+   
+  useEffect(() => {
+    // 只有当 teamLeader 不为空时才执行以下操作
+    if (teamLeader && teamLeader.length > 0) {
+      setManagerOptions([{ key: '', value: '', text: 'Select...' }].concat(
+        teamLeader.map((leader) => ({
+          key: leader.memberName,
+          value: leader.member_id,
+          text: leader.memberName,
+          image: { avatar: true, src: PhotoOptionsDict[leader.memberPhoto] },
+        }))
+      ));
+    }
+    if (teamMember && teamMember.length > 0) {
+      setMemberOptions([{ key: '', value: '', text: 'Select...' }].concat(
+        teamMember.map((member) => ({
+          key: member.memberName,
+          value: member.member_id,
+          text: member.memberName,
+          image: { avatar: true, src: PhotoOptionsDict[member.memberPhoto] },
+        }))
+      ));
+    }
+  }, [teamLeader, teamMember]);  // 侦听 teamLeader 的变化
 
-  ];
+  const [memberStatus, setMemberStatus] = useState({});
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const handleMemberIntoList = (memberId) => {
+    console.error('Handling member: ', memberId);
+    setMemberStatus((prevStatus) => {
+      const newStatus = {
+        ...prevStatus,
+        [memberId]: !prevStatus[memberId],
+      };
+
+      const newSelectedMembers = Object.keys(newStatus).filter(id => newStatus[id]);
+      setSelectedMembers(Object.keys(newStatus).filter(id => newStatus[id]));
+      console.error('Handling member: 狀態', newStatus);
+      console.error('Handling member: 列表', newSelectedMembers);
+      console.error('Handling member: 結果', selectedMembers);
+
+      
+      return newStatus;
+    });
+  };
+  const [selectedMemberOptions, setSelectedMemberOptions] = useState([]);
+
+  useEffect(() => {
+    // 当 selectedMembers 改变时，此回调将被触发
+    if (selectedMembers.length ===0){
+      setSelectedMemberOptions([{ key: '', value: '', text: 'Select...'}])
+    }else{
+
+      setSelectedMemberOptions(
+        selectedMembers.map((memberId) => {
+          console.error(memberId);
+          console.error(teamMember)
+          const member = teamMember.find((leader) => leader.member_id === parseInt(memberId, 10));
+          console.error(member)
+          if (!member) return []; // 如果找不到成员，返回 null
+
+          return {
+            key: member.memberName,
+            value: member.member_id,
+            text: member.memberName,
+            image: { avatar: true, src: PhotoOptionsDict[member.memberPhoto] },
+          };
+        })
+      );
+      }
+  }, [selectedMembers]);
+
+  
+
+
+
+
   const PhotoOptions = [
     { key: '', value: '', text: 'Select...', style:{fontWeight:"bold"} },
     { key: 'man', value: 'man', text: 'normal',  image: { avatar: true, src: man }, },
@@ -184,9 +289,16 @@ function Member_Team() {
     { key: 'hatman', value: 'hatman', text: 'hat',  image: { avatar: true, src: hatman }, },
     { key: 'oldman', value: 'oldman', text: 'old',  image: { avatar: true, src: oldman }, },
     { key: 'youngman', value: 'youngman', text: 'young',  image: { avatar: true, src: youngman }, },
-    
-
   ];
+  const PhotoOptionsDict = {
+    'man': man,
+    'woman': woman,
+    'hairman': hairman,
+    'hatwoman': hatwoman,
+    'hatman': hatman,
+    'oldman': oldman,
+    'youngman': youngman,
+  };
 
   // Level
   
@@ -196,6 +308,14 @@ function Member_Team() {
     { key: 'Senior', color: 'teal' },
     { key: 'Leader', color: 'blue' },
   ]
+
+  const levelsDict = {
+    'Entry': 'grey',
+    'Junior': 'olive',
+    'Senior': 'teal',
+    'Leader': 'blue',
+  };
+  
   const LevelOptions = [{ key: '', value: '', text: 'Select...' }];
   for (let i = 0; i < levels.length; i++) {
     LevelOptions.push({
@@ -249,17 +369,39 @@ function Member_Team() {
         console.error('There was a problem with the fetch operation: ', error);
       });
   };
+  const handleAddTeamFetch = () => {
+    const payload = {
+      teamName,
+      manager,
+      memberList,
+    };
+    fetch('http://0.0.0.0:8081/work_load/add-team', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }).then(response => {
+      // 回傳成功
+      if (response.ok){
+        setOpenAddTeamModal(false);
+        setTeamName('');
+        setManager('');
+        setMemberList([])
+      }
+      else{
+        return response.json().then(err => {
+          ;
+        });
+      }}
+      ).then(data => {
+        console.log(data);
+      }).catch(error => {
+        console.error('There was a problem with the fetch operation: ', error);
+      });
+  };
 
   
-
-
-
-
-
-
-  
-
-     
   return (
     <div style={{marginTop: "1%", marginLeft: "5%"}}>
       <Menu pointing secondary style={{ width: '256px' }}>
@@ -304,21 +446,21 @@ function Member_Team() {
             新增團隊
           </Button>
           <Card.Group itemsPerRow={3} stackable style={{ width: '95%', height: '100%', marginTop:"1%" }}>
-            {cards.map((card, index) => (
+            {teamCard.map((card, index) => (
               <Card key={index} 
                     fluid  
                 >
                 <Card.Content>
                   <Card.Header
                     style={{ fontSize: "25px", fontWeight: "bold", textAlign: "center" }}>
-                    {card.header}
+                      {card.teamName}
                   </Card.Header>
                 </Card.Content>
                 <Card.Content>
                   <Grid textAlign="center" verticalAlign="middle" style={{fontSize:"35px"}}>
                     <Grid.Column>
                       <Icon name='users' size='huge' style={{fontSize:"55px"}}/>
-                      15
+                        {card.memberCount}
                       
                     </Grid.Column>
                   </Grid>
@@ -327,6 +469,7 @@ function Member_Team() {
                 <Button fluid 
                         color="blue"
                         style={{ fontSize: "15px", fontWeight: "bold" }}
+                        onClick={() => setOpenCardAdd(true)}
                 >
                   新增成員
                 </Button>
@@ -342,26 +485,42 @@ function Member_Team() {
           > 
             新增成員
           </Button>
-          <table className="ui  celled striped table" style={{width:"95%", marginTop:"2%"}}>
+          <table className="ui  celled striped table" style={{width:"60%", marginTop:"2%"}}>
+            
             
             <thead>
               <tr>
-                <th style={{width: "5%"}}> user_id</th>
-                <th style={{width: "5%"}}> item_id</th>
-                <th style={{width: "10%"}}> ctime</th>
-                <th style={{width: "5%"}}> history_name</th>
+                <th style={{width: "5%"}}> 成員</th>
+                <th style={{width: "5%"}}> 信箱</th>
+                <th style={{width: "10%"}}> 職稱</th>
+                <th style={{width: "5%"}}> 團隊</th>
                 
               </tr>
             </thead>
             <tbody>
-            {data.map((item, index) => {
-              const uniqueId = `${item.item_id}-${index}`;
+            {allMember.map((item, index) => {
+             
               return(
-                <tr key={index}>
-                  <td>{item.user_id}</td>
-                  <td>{item.item_id}</td>
-                  <td>{item.ctime}</td>
-                  <td>{item.history_name}</td>
+                <tr key={index} style={{ fontWeight:"bold" }}>
+                  
+                  <td>
+                    <Grid >
+                      <Grid.Column width={1} style={{ marginRight: '0px' }}>
+                        <Image src={PhotoOptionsDict[item.memberPhoto]} alt={item.memberPhoto} size="mini" />
+                      </Grid.Column>
+                      <Grid.Column width={1} verticalAlign='middle'>
+                      </Grid.Column>
+                      <Grid.Column width={10} verticalAlign='middle'>
+                          {item.memberName}
+                      </Grid.Column>
+                    </Grid>
+                  </td>
+                  <td><a>{item.email}</a></td>
+                  <td>
+                    <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px'}} /> 
+                    {item.level}
+                  </td>
+                  <td>{item.teamName}</td>
                 </tr>
                 );
               })}
@@ -370,9 +529,134 @@ function Member_Team() {
         </div>
       )}
       <Modal
+        size='small' 
+        onClose={() => setOpenCardAdd(false)}
+        onOpen={() => setOpenCardAdd(true)}
+        open={openCardAdd}
+      >
+        <Modal.Header>新增團隊成員</Modal.Header>
+        <Modal.Content style ={{width : "80%"}}>
+          <table className="ui  celled striped table" 
+              style={{
+              marginLeft :"-5%",
+              width: '100%'}}>
+            <thead>
+                    <tr><th colspan="3">
+                    當前成員列表
+                    </th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                  <th style={{width: "45%"}}> 成員</th>
+                  <th style={{width: "45%"}}> 職稱</th>
+                  <th style={{width: "5%"}}> 新增</th>
+                  
+                </tr>
+            </thead>
+              <tbody>
+              {teamMember.map((item, index) => {
+              
+                return(
+                  <tr key={index} style={{ fontWeight:"bold" }}>
+                    
+                    <td>
+                      <Grid >
+                        <Grid.Column width={1} style={{ marginRight: '0px' }}>
+                          <Image src={PhotoOptionsDict[item.memberPhoto]} alt={item.memberPhoto} size="mini" />
+                        </Grid.Column>
+                        <Grid.Column width={1} verticalAlign='middle'>
+                        </Grid.Column>
+                        <Grid.Column width={10} verticalAlign='middle'>
+                            {item.memberName}
+                        </Grid.Column>
+                      </Grid>
+                    </td>
+                    <td>
+                      <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px'}} /> 
+                      {item.level}
+                    </td>
+                    <td>
+                        <Button
+                          fluid
+                          color={memberStatus[item.member_id] ? 'red' : 'green'}
+                          onClick={() => handleMemberIntoList(item.member_id)}
+                        >
+                          <Icon name={memberStatus[item.member_id] ? 'minus' : 'plus'}
+                                size="large" 
+                                style={{ marginRight: '0px'
+                                          }}/>
+                        </Button>
+
+                      </td>
+                  </tr>
+                  );
+                })}
+              </tbody>
+
+            </table>
+            
+          <Form  style={{
+              marginLeft :"-5%",
+              width: '100%'
+            }}>
+              
+                <Form.Field>
+                  <label>已選擇成员</label>
+                  <Dropdown
+                    placeholder=''
+                    fluid
+                    multiple
+                    selection
+                    options={selectedMemberOptions}
+                    //value={selectedMemberOptions}
+                    //onChange={e => setSelectedMember(e.target.value)}
+                    onChange={(e, { value }) => setSelectedMember(selectedMemberOptions)}
+                  />
+                </Form.Field>
+              <Form.Field>
+                <Checkbox 
+                  label='我已確認填寫內容無誤！絕對不會耍雷'
+                  onChange={()=>setIsTeamChecked(!isTeamChecked)} 
+                  tabIndex='0' 
+                />
+              </Form.Field>
+            </Form>
+
+        </Modal.Content>
+        <Modal.Actions>
+          <Button color='black' onClick={() => {
+            setOpenCardAdd(false);
+            setIsTeamChecked(false);
+            
+
+          }}>
+            取消
+          </Button>
+          <Button
+            content="新增"
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => {
+              setOpenCardAdd(false);
+              setmMdalFinish(true);
+              setIsTeamChecked(false);
+              handleAddTeamFetch();
+            }}
+            positive
+            disabled={!isTeamChecked}
+            style={{width:"120px"}}
+          />
+        </Modal.Actions>
+      </Modal>
+      <Modal
+        key={modalKey}
         size='large' 
         onClose={() => setOpenAddTeamModal(false)}
-        onOpen={() => setOpenAddTeamModal(true)}
+        onOpen={() => {
+          setOpenAddTeamModal(true);
+          setModalKey(Date.now());
+        }}
         open={openAddTeamModal}
       >
         <Modal.Header>新增團隊</Modal.Header>
@@ -411,7 +695,7 @@ function Member_Team() {
                   fluid
                   multiple
                   selection
-                  options={ManagerOptions}
+                  options={MemberOptions}
                   onChange={(e, { value }) => setMemberList(value)}
                 />
               </Form.Field>
@@ -430,6 +714,7 @@ function Member_Team() {
           <Button color='black' onClick={() => {
             setOpenAddTeamModal(false);
             setIsTeamChecked(false);
+            
 
           }}>
             取消
@@ -440,8 +725,9 @@ function Member_Team() {
             icon='checkmark'
             onClick={() => {
               setOpenAddTeamModal(false);
-              setOpenConfirm(true);
+              setmMdalFinish(true);
               setIsTeamChecked(false);
+              handleAddTeamFetch();
             }}
             positive
             disabled={!isTeamChecked}
