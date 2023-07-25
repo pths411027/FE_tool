@@ -7,12 +7,38 @@ import { Dropdown, Input, Button, Label, Header, Modal, Icon, Card, Grid, Menu, 
 
 
 const User = () => {
-    const [mode, setMode] = useState('none'); // 預設為登入模式
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // 預設為登入模式
+    const [mode, setMode] = useState('login'); 
+
+    // 登入資料
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+
+    const [registerEmail, setRegisterEmail] = useState('');
+    const [registerPassword, setRegistePassword] = useState('');
+
+
+
+    // 註冊資料
+
+
+    const handle_transform_to_register= () => {
+        setLoginEmail('');
+        setLoginPassword('');
+        setMode('register')
+    };
+
+    const handle_transform_to_login= () => {
+        setLoginEmail('');
+        setLoginPassword('');
+        setMode('login');
+    };
+
+
    
     return (
         <div>
+            {mode === 'login' ? (
             <Form style={{
                 marginTop:'10%',
                 marginLeft: '30%', 
@@ -28,8 +54,8 @@ const User = () => {
                     label="電子郵件"
                     name="chineseName"
                     placeholder="marcus.tsai@shopee.com"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    value={loginEmail}
+                    onChange={e => setLoginEmail(e.target.value)}
                     required
                     style={{fontWeight:"bold"}}
                     />
@@ -37,27 +63,89 @@ const User = () => {
                     label="密碼"
                     name="chineseName"
                     placeholder="請輸入密碼"
-                    value={password}
+                    value={loginPassword}
                     type="password"  
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={e => setLoginPassword(e.target.value)}
                     required
                     style={{fontWeight:"bold"}}
                     />
-                <Button
-                    content="登入"
-                    labelPosition='left'
-                    icon='user circle icon'
-                    positive
-                    style={{width:"150px"}}
-                />
-                <Button
-                    content="註冊"
-                    labelPosition='left'
-                    icon='user circle outline icon'
-                    negative
-                    style={{width:"150px"}}
-                />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button
+                        content="登入"
+                        labelPosition='left'
+                        icon='user circle icon'
+                        positive
+                        style={{width:"50%"}}
+                    />
+                    <Button
+                        content="註冊"
+                        labelPosition='left'
+                        icon='user circle outline icon'
+                        negative
+                        style={{width:"50%"}}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            handle_transform_to_register();
+                        }}
+                        
+                    />
+                </div>
             </Form>
+            ) : (
+                <Form style={{
+                    marginTop:'10%',
+                    marginLeft: '30%', 
+                    width: '40%', 
+                    backgroundColor: 'rgb(249, 250, 251)', 
+                    border: '1px solid rgb(234, 234, 235)', 
+                    borderRadius: '10px',
+                    padding: '20px',                        
+                    }}>
+                    <h2 className="ui  header">註冊帳號</h2>
+                    
+                    <Form.Input
+                        label="電子郵件"
+                        name="chineseName"
+                        placeholder="marcus.tsai@shopee.com"
+                        value={registerEmail}
+                        onChange={e => setRegisterEmail(e.target.value)}
+                        required
+                        style={{fontWeight:"bold"}}
+                        />
+                    <Form.Input
+                        label="密碼"
+                        name="chineseName"
+                        placeholder="請輸入密碼"
+                        value={registerPassword}
+                        type="password"  
+                        onChange={e => setRegistePassword(e.target.value)}
+                        required
+                        style={{fontWeight:"bold"}}
+                        />
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                            content="註冊"
+                            labelPosition='left'
+                            icon='user circle icon'
+                            positive
+                            style={{width:"50%"}}
+                        />
+                        <Button
+                            content="登入"
+                            labelPosition='left'
+                            icon='user circle outline icon'
+                            negative
+                            style={{width:"50%"}}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                handle_transform_to_login();
+                            }}
+                            
+                        />
+                    </div>
+                </Form>
+            )}
+
         </div>
     );
 }
