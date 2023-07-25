@@ -35,8 +35,8 @@ function Sidebar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/A" activeClassName="active" isActive={isActive}>
-              新增任務
+            <NavLink to="/datasuite" activeClassName="active" isActive={isActive}>
+              資料庫系統
             </NavLink>
           </li>
           <li>
