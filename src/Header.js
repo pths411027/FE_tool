@@ -6,7 +6,7 @@ import { Header, Icon } from 'semantic-ui-react'
 
 function header () {
   return(
-    <Header as='h2' style={{ backgroundColor: ' rgb(22, 55, 105)', position: 'sticky', top: 0, zIndex: 1000, padding: '10px', height: '50px', display: 'flex', justifyContent: 'space-between', alignItems:'center'}}>
+    <Header as='h2' style={{ backgroundColor: ' rgb(23, 48, 100)', position: 'sticky', top: 0, zIndex: 1000, padding: '10px', height: '50px', display: 'flex', justifyContent: 'space-between', alignItems:'center'}}>
       <Header.Content style={{ fontSize: '30px', color: 'white', marginLeft: '0%'}}>
         <Link to="*" className="link">Project Manage</Link>
       </Header.Content>
