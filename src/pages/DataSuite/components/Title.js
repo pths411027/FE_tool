@@ -7,7 +7,7 @@ const Title = () => {
     
     return (
     <div className="layer1">
-        <h1> Marcus SQL System </h1>
+        <h1> SQL System </h1>
     </div>
     );
 }
