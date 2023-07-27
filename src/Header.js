@@ -8,7 +8,7 @@ function header () {
   return(
     <Header as='h2' style={{ backgroundColor: ' rgb(23, 48, 100)', position: 'sticky', top: 0, zIndex: 1000, padding: '10px', height: '50px', display: 'flex', justifyContent: 'space-between', alignItems:'center'}}>
       <Header.Content style={{ fontSize: '30px', color: 'white', marginLeft: '0%'}}>
-        <Link to="*" className="link">Project Manage</Link>
+        <Link to="*" className="link">Dingtwo System</Link>
       </Header.Content>
       <Header.Content style={{ fontSize: '30px', color: 'white'}}>
         <Link to="/user" className="link" style={{fontSize: '20px'}}>
