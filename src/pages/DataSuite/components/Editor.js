@@ -11,11 +11,24 @@ import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/python/python.js";
 import { Controlled as ControlledEditor } from "react-codemirror2";
 
-import { Segment, Select, Button, Table, Label, Icon, Menu, Item} from 'semantic-ui-react';
+import { Segment, Form, Button, Table, Checkbox, Icon, Menu, Item, Modal, Dropdown} from 'semantic-ui-react';
 const Editor = () => {
     const [value, setValue] = useState('');
     const [result, setResult] = useState(null);
     const [tablelist, setTablelist] = useState([]);
+
+    const [modalSheetOpen, setModalSheetOpen] = useState(false);
+    const [taskName, setTaskName] = useState('');
+    const [url, setUrl] = useState('');
+    const [sheets, setSheets] = useState([]);
+    const [sheet, setSheet] = useState('');
+    const [isHeader, setIsHeader] = useState(false);
+    const [start, setStart] = useState('A1');
+    const [valid_url, setValid_url] = useState('');
+
+    const [isToggled, setIsToggled] = useState(false);
+
+
 
 
     function handleChange(editor, data, value) {
@@ -93,16 +106,66 @@ const Editor = () => {
           setMenuClicked(false);
         }, 500); // 这里的 500 表示菜单项点击后的反应持续时间（单位为毫秒）
       };
-
-
-
     
-    
+    const checkURL = async (url) => {
+        if (url === '') {
+            setValid_url('');
+            return;
+        }
+
+        try{
+            const response = await fetch(`http://localhost:8081/data-suite/google-sheet-name?url=${url}`);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                setValid_url(true);
+                setSheets(data.sheet_list);
+            } else {
+                setValid_url(false);
+                setSheets([]);
+
+            }
+        }catch(err){
+            console.log(err);
+        }
+
+    }
+    const handleSheetRemove = () => {
+        setModalSheetOpen(false);
+        setTaskName('');
+        setUrl('');
+        setSheets([]);
+        setIsHeader(false);
+        setStart('A1');
+        setValid_url(true);
+    }
+
+    const handleSheetSubmit = async () => {
+        const response = await fetch('http://localhost:8081/data-suite/google-sheet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'query': value,
+                'task_name': taskName,
+                'url': url,
+                'sheet_name': sheet,
+                'start_cell': start,
+                'include_header': isHeader,
+                
+            }),
+        });
+        const data = await response.json();
+        console.log(data);
+        handleSheetRemove();
+    }
+
 
     return (
         <div className="editor" style={{marginLeft:"5%"}}>
             <div style={{ display: 'flex' }}>
-                `<Menu vertical style ={{width:"15%"}}>
+                <Menu vertical style ={{width:"15%"}}>
                     <Menu.Item style={{fontWeight: 'bolder', fontSize: "18px", marginLeft: "0%"}}>
                         <div style={{ display: "flex", alignItems: "center" , fontWeight: 'bolder'}}>
                             <Icon name='sitemap' style={{ marginRight: "8px" }} />
@@ -120,7 +183,6 @@ const Editor = () => {
                                 transition: 'font-weight 0.5s'
                                 }} 
                                 onClick={handleMenuClick}
-                                
                             >
                                 <div
                                     onClick={() => {
@@ -129,7 +191,6 @@ const Editor = () => {
                                     }} 
                                     style={{ display: "flex", alignItems: "center" , fontWeight: 'bolder'}} 
                                     >
-                                
                                     <Icon name='table' style={{ marginRight: "8px" }} />
                                     <div>{item}</div>
                                 </div>
@@ -139,13 +200,15 @@ const Editor = () => {
                 </Menu>
                 <Segment style={{fontWeight: "bolder", width: "64%", marginLeft: '10px', marginTop: '0px', height: '520px'}}>
                     <div className="ui small basic icon buttons" style={{marginBottom: "10px"}}>
-                        <Button basic onClick={fetchData} >
+                        <Button basic onClick={fetchData}>
                             <Icon name='play'/>
                         </Button>
                         <Button basic onClick={handleClick}>
                             <Icon name='download icon'/>
                         </Button>
-                        
+                        <Button basic onClick={() => setModalSheetOpen(true)}>
+                            <Icon name='google drive icon'/>
+                        </Button>
                     </div>
                     <ControlledEditor 
                         style={{fontSize : '12px'}}
@@ -167,9 +230,102 @@ const Editor = () => {
                 </Segment>
 
             </div>
-            
-            
-            
+
+            <Modal 
+                open={modalSheetOpen} 
+                onClose={() => setModalSheetOpen(false)} 
+                size='tiny'>
+                <Modal.Header>
+                    <i className="google drive icon"></i>
+                    Export Google Sheet
+                    
+                </Modal.Header>
+                <Modal.Content style={{width: '80%'}}>
+                    <Form  style={{
+                        marginLeft :"-5%",
+                        width: '100%'
+                        }}>
+                        <Form.Group widths='equal'>
+                            <Form.Input
+                            label="任務名稱"
+                            name="taskName"
+                            placeholder="請輸入任務名稱"
+                            value={taskName}
+                            onChange={e => setTaskName(e.target.value)}
+
+                            
+                            width={1}
+                            required
+                            />
+                        </Form.Group>
+                        <Form.Group widths='equal'>
+                            
+
+                            <Form.Input
+                            label={url === '' ? "請輸入URL" : "已輸入URL"}
+                            name="url"
+                            placeholder="http"
+                            value={url}
+                            onChange={e => {
+                                setUrl(e.target.value);
+                                checkURL(e.target.value);
+                            }}
+                            width={1}
+                            required
+                            />
+                        </Form.Group>
+                        
+                        {url !=='' && valid_url === false && <p style={{color: 'red', fontWeight: 'bolder'}}>無法打開此 G-sheet，請確認連結是否正確且具有存取權！</p>} 
+                        {url !=='' && valid_url === true && <p style={{color: 'green', fontWeight: 'bolder'}}>成功打開此 G-sheet！</p>}
+                        {url !=='' && valid_url === '' && <p style={{color: 'black', fontWeight: 'bolder'}}>驗證中</p>}
+                        <Form.Field widths='equal'>
+
+                            <label>選擇工作表</label>
+                            
+                            <Dropdown
+                                placeholder="工作表"
+                                fluid
+                                selection
+                                options={sheets.map((sheet, sheetIndex) => ({
+                                    key: sheetIndex,
+                                    text: sheet,
+                                    value: sheet,
+                                }))}
+                                onChange={(e, { value }) => setSheet(value)}
+                                >
+
+                            </Dropdown>
+                        </Form.Field>
+                        <Form.Group widths='equal'>
+                            <Form.Input
+                            label="起始儲存格"
+                            name="cell"
+                            placeholder="A1"
+                            value={start}
+                            onChange={e => setStart(e.target.value)}
+                            width={1}
+                            required
+                            />
+                        </Form.Group>
+                        <Form.Field>
+                            <Checkbox 
+                            label='是否包含表頭'
+                            onChange={()=>setIsHeader(!isHeader)}
+                            tabIndex='0' 
+                            />
+                        </Form.Field>
+                        
+                    </Form>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={() => handleSheetRemove()}>
+                        <Icon name='remove' /> 取消
+                    </Button>
+                    <Button onClick={handleSheetSubmit} disabled={value ==='' || sheet === ''}>
+                        <Icon name='checkmark' /> 確認
+                    </Button>
+                </Modal.Actions>
+            </Modal>
             {result && (
                 <Table celled style={{width:"80%"}}>
                     <Table.Header>
@@ -192,6 +348,7 @@ const Editor = () => {
 
                 </Table>
             )}
+            
         </div>
     );
 }
