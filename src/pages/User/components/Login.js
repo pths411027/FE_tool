@@ -5,23 +5,23 @@ import { Dropdown, Input, Button, Label, Header, Modal, Icon, Card, Grid, Menu, 
 
 function Login() {
 
-  
+
   const [activeItem, setActiveItem] = useState('TeamItem');
   const [openAddTeamModal, setOpenAddTeamModal] = useState(false);
   const [modalFinish, setmMdalFinish] = useState(false);
   const [isTeamChecked, setIsTeamChecked] = useState(false);
   const [openAddMemberModal, setOpenAddMemberModal] = useState(false);
-  
-  
+
+
   // form information
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
 
-  
+
   const [modalKey, setModalKey] = useState(Date.now());
 
-  
+
 
   const handleAddTeamClick = () => {
     setOpenAddTeamModal(true)
@@ -29,7 +29,7 @@ function Login() {
   const handleAddMemberClick = () => {
     setOpenAddMemberModal(true)``
   }
-  
+
   const [selectedMembers, setSelectedMembers] = useState([]);
 
   const handleAddTeamFetch = () => {
@@ -37,7 +37,7 @@ function Login() {
       email,
       password,
     };
-    fetch('http://0.0.0.0:8081/work_load/add-team', {
+    fetch('http://0.0.0.0:8081/work-load/add-team', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -45,48 +45,49 @@ function Login() {
       body: JSON.stringify(payload)
     }).then(response => {
       // 回傳成功
-      if (response.ok){
+      if (response.ok) {
         setOpenAddTeamModal(false);
         setEmail('');
         setPassword('');
       }
-      else{
+      else {
         return response.json().then(err => {
           ;
         });
-      }}
-      ).then(data => {
-        console.log(data);
-      }).catch(error => {
-        console.error('There was a problem with the fetch operation: ', error);
-      });
+      }
+    }
+    ).then(data => {
+      console.log(data);
+    }).catch(error => {
+      console.error('There was a problem with the fetch operation: ', error);
+    });
   };
   return (
-    <div style={{marginTop: "1%", marginLeft: "5%"}}>
+    <div style={{ marginTop: "1%", marginLeft: "5%" }}>
       {activeItem === 'TeamItem' ? (
         <div>
           <Button color='green'
-                  size="large"
-                  onClick={handleAddTeamClick}
-          > 
+            size="large"
+            onClick={handleAddTeamClick}
+          >
             登入
           </Button>
-          
+
         </div>
       ) : (
         <div>
           <Button color='green'
-                  size="small"
-                  onClick={handleAddMemberClick}
-          > 
+            size="small"
+            onClick={handleAddMemberClick}
+          >
             新增成員
           </Button>
         </div>
       )}
-      
+
       <Modal
         key={modalKey}
-        size='tiny' 
+        size='tiny'
         onClose={() => setOpenAddTeamModal(false)}
         onOpen={() => {
           setOpenAddTeamModal(true);
@@ -95,34 +96,34 @@ function Login() {
         open={openAddTeamModal}
       >
         <Modal.Header>登入</Modal.Header>
-        <Modal.Content style ={{width : "80%"}}>
-          <Form  style={{
-              marginLeft :"-5%",
-              width: '100%'
-            }}>
-                <Form.Input
-                  label="電子郵件"
-                  name="chineseName"
-                  placeholder="marcus.tsai@shopee.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  style={{fontWeight:"bold"}}
-                />
-                <Form.Input
-                  label="密碼"
-                  name="chineseName"
-                  placeholder="請輸入密碼"
-                  value={password}
-                  type="password"  
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  style={{fontWeight:"bold"}}
-                />
-            </Form>
+        <Modal.Content style={{ width: "80%" }}>
+          <Form style={{
+            marginLeft: "-5%",
+            width: '100%'
+          }}>
+            <Form.Input
+              label="電子郵件"
+              name="chineseName"
+              placeholder="marcus.tsai@shopee.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              style={{ fontWeight: "bold" }}
+            />
+            <Form.Input
+              label="密碼"
+              name="chineseName"
+              placeholder="請輸入密碼"
+              value={password}
+              type="password"
+              onChange={e => setPassword(e.target.value)}
+              required
+              style={{ fontWeight: "bold" }}
+            />
+          </Form>
         </Modal.Content>
         <Modal.Actions>
-           <Button
+          <Button
             content="新增"
             labelPosition='right'
             icon='square outline icon'
@@ -134,9 +135,9 @@ function Login() {
             }}
             negative
             disabled={!isTeamChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
-          
+
           <Button
             content="新增"
             labelPosition='right'
@@ -149,7 +150,7 @@ function Login() {
             }}
             positive
             disabled={!isTeamChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
           <Button
             content="無帳號"
@@ -163,11 +164,11 @@ function Login() {
             }}
             positive
             disabled={!isTeamChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
         </Modal.Actions>
       </Modal>
-  </div>
-);
+    </div>
+  );
 }
 export default Login;

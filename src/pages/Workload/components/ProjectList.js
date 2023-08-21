@@ -1,5 +1,5 @@
 import "./Layer2.css"
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import 'semantic-ui-css/semantic.min.css';
 import { Grid, Input, Button, Label, Modal, Icon, Image } from 'semantic-ui-react';
 
@@ -36,15 +36,15 @@ function ProjectList() {
   };
 
 
-  
+
   // 在组件挂载时获取数据
   useEffect(() => {
     fetchProjectData();
   }, []);
-  
+
   const fetchProjectData = async () => {
     try {
-      const response = await fetch('http://0.0.0.0:8081/work_load/project-list');
+      const response = await fetch('http://0.0.0.0:8081/work-load/project-list');
       const result = await response.json();
       setProjectData(result.project_list);
     } catch (error) {
@@ -56,7 +56,7 @@ function ProjectList() {
     setLoadingButtons({ ...loadingButtons, [index]: true });
     try {
       // 根据项目名进行 GET 请求
-      const response = await fetch(`http://0.0.0.0:8081/work_load/project-detail?pro_id=${pro_id}`);
+      const response = await fetch(`http://0.0.0.0:8081/work-load/project-detail?pro_id=${pro_id}`);
       const result = await response.json();
       console.error(result)
       setProjectHeader([pro_id, project_name])
@@ -82,14 +82,14 @@ function ProjectList() {
     }
 
     try {
-      const response = await fetch(`http://0.0.0.0:8081/work_load/upload-task-file?pro_id=${projectheader[0]}`, {
+      const response = await fetch(`http://0.0.0.0:8081/work-load/upload-task-file?pro_id=${projectheader[0]}`, {
         method: "POST",
         body: formData,
       });
       const result = await response.json();
-      console.log(result);        
+      console.log(result);
       handleButtonClick(projectheader[0], projectheader[1]);
-      setUploadModalOpen(false); // 上传成功后关闭 Modal
+      setUploadModalOpen(false); // 上传成功后关闭 Modal`
     } catch (error) {
       console.error("Error:uploaderror", error);
     }
@@ -104,75 +104,75 @@ function ProjectList() {
     }
 
     try {
-      const response = await fetch(`http://0.0.0.0:8081/work_load/upload-task-file?pro_id=${projectheader[0]}`, {
+      const response = await fetch(`http://0.0.0.0:8081/work-load/upload-task-file?pro_id=${projectheader[0]}`, {
         method: "POST",
         body: formData,
       });
       const result = await response.json();
-      console.log(result);        
+      console.log(result);
       handleButtonClick(projectheader[0], projectheader[1]);
     } catch (error) {
       console.error("Error:uploaderror", error);
     }
-    
-    
+
+
   };
 
   const handleClick = () => {
     fileInput.current.value = ""; // 將 file input 的值設置為空
     fileInput.current.click(); // 使用 ref 點擊 input 元素
-    
+
   }
-  
+
   return (
     <div>
       {!showSecondPart ? (
-        <div style={{marginTop: "1%", marginLeft: "5%"}}>
+        <div style={{ marginTop: "1%", marginLeft: "5%" }}>
           <Button color='green'> Ask for Tasks</Button>
-          <table className="ui red celled striped table" style={{width:"95%"}}>
+          <table className="ui red celled striped table" style={{ width: "95%" }}>
             <thead>
               <tr>
-                <th style={{width: "10%"}}> 專案名稱</th>
-                <th style={{width: "10%"}}> KPI</th>
-                <th style={{width: "10%"}}> 創建時間</th>
-                <th style={{width: "10%"}}> 更新時間</th>
-                <th style={{width: "10%"}}> 負責團隊</th>
-                <th style={{width: "30%"}}> 負責成員</th>
-                <th style={{width: "15%"}}> 進入專案</th>
+                <th style={{ width: "10%" }}> 專案名稱</th>
+                <th style={{ width: "10%" }}> KPI</th>
+                <th style={{ width: "10%" }}> 創建時間</th>
+                <th style={{ width: "10%" }}> 更新時間</th>
+                <th style={{ width: "10%" }}> 負責團隊</th>
+                <th style={{ width: "30%" }}> 負責成員</th>
+                <th style={{ width: "15%" }}> 進入專案</th>
               </tr>
             </thead>
             <tbody>
-            {projectdata.map((item, index) => {
-              const buttonLoading = loadingButtons[index]===true;
-              return(
-                <tr key={index}>
-                  <td>{item.project_name}</td>
-                  <td>{item.KPI}</td>
-                  <td>{item.created_time}</td>
-                  <td>{item.updated_time}</td>
-                  <td>{item.team}</td>
-                  <td>{item.team}</td>
-                  <td>
-                    <Button
-                      className={buttonLoading? 'ui loading': ''}
-                      fluid
-                      onClick={() => handleButtonClick(item.pro_id, item.project_name, index)}
-                      color='green'
-                    >
-                      進入該專案
-                    </Button>
-                  </td>
-                </tr>
+              {projectdata.map((item, index) => {
+                const buttonLoading = loadingButtons[index] === true;
+                return (
+                  <tr key={index}>
+                    <td>{item.project_name}</td>
+                    <td>{item.KPI}</td>
+                    <td>{item.created_time}</td>
+                    <td>{item.updated_time}</td>
+                    <td>{item.team}</td>
+                    <td>{item.team}</td>
+                    <td>
+                      <Button
+                        className={buttonLoading ? 'ui loading' : ''}
+                        fluid
+                        onClick={() => handleButtonClick(item.pro_id, item.project_name, index)}
+                        color='green'
+                      >
+                        進入該專案
+                      </Button>
+                    </td>
+                  </tr>
                 );
               })}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
       ) : (
-      <div style={{marginTop: "1%", marginLeft: "5%"}}>
-          
+        <div style={{ marginTop: "1%", marginLeft: "5%" }}>
+
           <Button color="green" onClick={handleClick}>
-            <Icon name='upload icon' style={{ marginRight:"10px" }} color='white' />
+            <Icon name='upload icon' style={{ marginRight: "10px" }} color='white' />
             上傳檔案
           </Button>
           <input
@@ -188,7 +188,7 @@ function ProjectList() {
             onClose={() => setUploadModalOpen(false)}
           >
             <Modal.Header>確認上傳</Modal.Header>
-            <Modal.Content style={{width:"80%"}}>
+            <Modal.Content style={{ width: "80%" }}>
               <ul>
                 {selectedFiles.map((file, index) => (
                   <li key={index}>{file.name}</li>
@@ -196,63 +196,63 @@ function ProjectList() {
               </ul>
             </Modal.Content>
             <Modal.Actions>
-              
-              <Button className={uploadingButtons===false? 'ui loading': ''}
-                      color="green"
-                      onClick={
-                        () => {
-                          handleUploadConfirm();
-                          setUploadingButtons(false);
-                        }
-                      }>Confirm</Button>
+
+              <Button className={uploadingButtons === false ? 'ui loading' : ''}
+                color="green"
+                onClick={
+                  () => {
+                    handleUploadConfirm();
+                    setUploadingButtons(false);
+                  }
+                }>Confirm</Button>
               <Button color="red" onClick={() => setUploadModalOpen(false)}>Cancel</Button>
             </Modal.Actions>
           </Modal>
 
-          <table className="ui red celled striped table" style={{width:"95%"}}>
+          <table className="ui red celled striped table" style={{ width: "95%" }}>
             <thead>
               <tr>
-                <th style={{width: "10%"}}> 上傳時間</th>
-                <th style={{width: "5%"}}> 檔案類型</th>
-                <th style={{width: "30%"}}> 檔案名稱</th>
-                <th style={{width: "10%"}}> 檔案大小</th>
-                <th style={{width: "5%"}}> 下載檔案</th>
+                <th style={{ width: "10%" }}> 上傳時間</th>
+                <th style={{ width: "5%" }}> 檔案類型</th>
+                <th style={{ width: "30%" }}> 檔案名稱</th>
+                <th style={{ width: "10%" }}> 檔案大小</th>
+                <th style={{ width: "5%" }}> 下載檔案</th>
               </tr>
             </thead>
             <tbody>
-            {projectdetial.map((item, index) => {
-              const handleDownload = () => {
-                window.open(`http://localhost:8081/work_load/download-task-file/${item.file_id}`);
-              };
-              return(
-                <tr key={index}>
-                  <td>{item.created_time}</td>
-                  <td>
-                    <Grid.Column width={1} style={{ marginLeft: '20%', width: '60%' }}>
-                    <Image src={FileDict[item.file_extension] || others} alt={item.file_extension} size="mini" />
-                    </Grid.Column>
-                  </td>
-                  <td>{item.file_name}</td>
-                  <td>{item.file_size}</td>
-                  <td>
-                  <Button color="green" size="tiny" onClick={handleDownload}>
-                    <Icon name='cloud download icon' style={{ marginRight:"0px" }} color='white' />
-                    下載點
-                  </Button>
-                    
-                  
-                  </td>
-                </tr>
+              {projectdetial.map((item, index) => {
+                const handleDownload = () => {
+                  window.open(`http://localhost:8081/work-load/download-task-file/${item.file_id}`);
+                };
+                return (
+                  <tr key={index}>
+                    <td>{item.created_time}</td>
+                    <td>
+                      <Grid.Column width={1} style={{ marginLeft: '20%', width: '60%' }}>
+                        <Image src={FileDict[item.file_extension] || others} alt={item.file_extension} size="mini" />
+                      </Grid.Column>
+                    </td>
+                    <td>{item.file_name}</td>
+                    <td>{item.file_size}</td>
+                    <td>
+                      <Button color="green" size="tiny" onClick={handleDownload}>
+                        <Icon name='cloud download icon' style={{ marginRight: "0px" }} color='white' />
+                        下載點
+                      </Button>
+
+
+                    </td>
+                  </tr>
                 );
               })}
-          </tbody>
-        </table>
-          
+            </tbody>
+          </table>
 
-      </div>
+
+        </div>
       )}
-  </div>
-);
+    </div>
+  );
 }
 
 export default ProjectList;

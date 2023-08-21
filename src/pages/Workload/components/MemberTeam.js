@@ -47,22 +47,22 @@ const data = [
     complete: '',
     pic_remark: '',
   },
-  
+
   // More items...
 ];
 const emailOptions = [
-  { key: 'gmail', text: '@gmail.com', value: '@gmail.com', style:{marginLeft:"-5px"} },
-  { key: 'yahoo', text: '@yahoo.com', value: '@yahoo.com' , style:{marginLeft:"-5px"} },
-  { key: 'shopee', text: '@shopee.com', value: '@shopee.com' , style:{marginLeft:"-5px"} },
+  { key: 'gmail', text: '@gmail.com', value: '@gmail.com', style: { marginLeft: "-5px" } },
+  { key: 'yahoo', text: '@yahoo.com', value: '@yahoo.com', style: { marginLeft: "-5px" } },
+  { key: 'shopee', text: '@shopee.com', value: '@shopee.com', style: { marginLeft: "-5px" } },
   // 更多选项...
 ]
 
 function Member_Team() {
   //const [data, setData] = useState([]);
-  
-  
-  
-  
+
+
+
+
   const [activeItem, setActiveItem] = useState('TeamItem');
   const [openAddTeamModal, setOpenAddTeamModal] = useState(false);
   const [openAddMemberModal, setOpenAddMemberModal] = useState(false);
@@ -78,7 +78,7 @@ function Member_Team() {
   const [isMemberChecked, setIsMemberChecked] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openCardAdd, setOpenCardAdd] = useState(false);
-  
+
 
   // add member
   const [memberName, setMemberName] = useState('');
@@ -94,22 +94,22 @@ function Member_Team() {
 
   const [modalKey, setModalKey] = useState(Date.now());
 
-  
 
-  
-  
+
+
+
 
 
   useEffect(() => {
-    fetchAddProjectData(); 
+    fetchAddProjectData();
   }, [activeItem, openAddTeamModal, openAddMemberModal]);
-  
+
   const fetchAddProjectData = async () => {
-    if(activeItem === 'TeamItem') {
-      try{
-        const response_leader = await fetch('http://0.0.0.0:8081/work_load/member-list?level=Leader');
-        const response_member = await fetch('http://0.0.0.0:8081/work_load/member-list?level=Junior');
-        const response_team = await fetch('http://0.0.0.0:8081/work_load/team-list');
+    if (activeItem === 'TeamItem') {
+      try {
+        const response_leader = await fetch('http://0.0.0.0:8081/work-load/member-list?level=Leader');
+        const response_member = await fetch('http://0.0.0.0:8081/work-load/member-list?level=Junior');
+        const response_team = await fetch('http://0.0.0.0:8081/work-load/team-list');
         const result_leader = await response_leader.json();
         const result_member = await response_member.json();
         const result_team = await response_team.json();
@@ -119,15 +119,15 @@ function Member_Team() {
         setTeamLeader(free_leaders);
         setTeamMember(free_member);
         setTeamCard(result_team.team);
-      } catch(error){
+      } catch (error) {
         console.error('There was a problem fetching the data: ', error);
       }
-    }else{
-      try{
-        const response = await fetch('http://0.0.0.0:8081/work_load/member-list?level=All');
+    } else {
+      try {
+        const response = await fetch('http://0.0.0.0:8081/work-load/member-list?level=All');
         const result = await response.json();
         setAllMember(result.member_list);
-      } catch(error){
+      } catch (error) {
         console.error('There was a problem fetching the data: ', error);
       }
     }
@@ -141,7 +141,7 @@ function Member_Team() {
       text: 'Yes',
       onClick: () => {
         setmMdalFinish(false);
-        
+
       },
     }
   ];
@@ -160,7 +160,7 @@ function Member_Team() {
 
 
 
-  
+
 
   //卡片資料
   const cards = [
@@ -184,7 +184,7 @@ function Member_Team() {
       ],
       link: 'http://example.com',
     },
-    
+
     // 更多卡片数据...
   ];
   const handleItemClick = (name) => {
@@ -197,13 +197,13 @@ function Member_Team() {
   const handleAddMemberClick = () => {
     setOpenAddMemberModal(true)
   }
-  
-  
+
+
   const [ManagerOptions, setManagerOptions] = useState([{ key: '', value: '', text: 'Select...' }]);
   const [MemberOptions, setMemberOptions] = useState([{ key: '', value: '', text: 'Select...' }]);
   const [selectedMember, setSelectedMember] = useState([]);
 
-   
+
   useEffect(() => {
     // 只有当 teamLeader 不为空时才执行以下操作
     if (teamLeader && teamLeader.length > 0) {
@@ -244,7 +244,7 @@ function Member_Team() {
       console.error('Handling member: 列表', newSelectedMembers);
       console.error('Handling member: 結果', selectedMembers);
 
-      
+
       return newStatus;
     });
   };
@@ -252,9 +252,9 @@ function Member_Team() {
 
   useEffect(() => {
     // 当 selectedMembers 改变时，此回调将被触发
-    if (selectedMembers.length ===0){
-      setSelectedMemberOptions([{ key: '', value: '', text: 'Select...'}])
-    }else{
+    if (selectedMembers.length === 0) {
+      setSelectedMemberOptions([{ key: '', value: '', text: 'Select...' }])
+    } else {
 
       setSelectedMemberOptions(
         selectedMembers.map((memberId) => {
@@ -272,23 +272,23 @@ function Member_Team() {
           };
         })
       );
-      }
+    }
   }, [selectedMembers]);
 
-  
+
 
 
 
 
   const PhotoOptions = [
-    { key: '', value: '', text: 'Select...', style:{fontWeight:"bold"} },
-    { key: 'man', value: 'man', text: 'normal',  image: { avatar: true, src: man }, },
-    { key: 'woman', value: 'woman', text: 'normal',  image: { avatar: true, src: woman }, },
-    { key: 'hairman', value: 'hairman', text: 'hair',  image: { avatar: true, src:  hairman}, },
-    { key: 'hatwoman', value: 'hatwoman', text: 'hat',  image: { avatar: true, src: hatwoman }, },
-    { key: 'hatman', value: 'hatman', text: 'hat',  image: { avatar: true, src: hatman }, },
-    { key: 'oldman', value: 'oldman', text: 'old',  image: { avatar: true, src: oldman }, },
-    { key: 'youngman', value: 'youngman', text: 'young',  image: { avatar: true, src: youngman }, },
+    { key: '', value: '', text: 'Select...', style: { fontWeight: "bold" } },
+    { key: 'man', value: 'man', text: 'normal', image: { avatar: true, src: man }, },
+    { key: 'woman', value: 'woman', text: 'normal', image: { avatar: true, src: woman }, },
+    { key: 'hairman', value: 'hairman', text: 'hair', image: { avatar: true, src: hairman }, },
+    { key: 'hatwoman', value: 'hatwoman', text: 'hat', image: { avatar: true, src: hatwoman }, },
+    { key: 'hatman', value: 'hatman', text: 'hat', image: { avatar: true, src: hatman }, },
+    { key: 'oldman', value: 'oldman', text: 'old', image: { avatar: true, src: oldman }, },
+    { key: 'youngman', value: 'youngman', text: 'young', image: { avatar: true, src: youngman }, },
   ];
   const PhotoOptionsDict = {
     'man': man,
@@ -301,7 +301,7 @@ function Member_Team() {
   };
 
   // Level
-  
+
   const levels = [
     { key: 'Entry', color: 'grey' },
     { key: 'Junior', color: 'olive' },
@@ -315,7 +315,7 @@ function Member_Team() {
     'Senior': 'teal',
     'Leader': 'blue',
   };
-  
+
   const LevelOptions = [{ key: '', value: '', text: 'Select...' }];
   for (let i = 0; i < levels.length; i++) {
     LevelOptions.push({
@@ -323,7 +323,7 @@ function Member_Team() {
       value: levels[i].key,
       text: (
         <span>
-          <Label circular color={levels[i].color} empty style={{ marginLeft: "10px", marginRight: "15px" }} /> 
+          <Label circular color={levels[i].color} empty style={{ marginLeft: "10px", marginRight: "15px" }} />
           {levels[i].key}
         </span>
       ),
@@ -339,7 +339,7 @@ function Member_Team() {
       memberEmailType,
       memberLevel
     };
-    fetch('http://0.0.0.0:8081/work_load/add_member', {
+    fetch('http://0.0.0.0:8081/work-load/add_member', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -347,7 +347,7 @@ function Member_Team() {
       body: JSON.stringify(payload)
     }).then(response => {
       // 回傳成功
-      if (response.ok){
+      if (response.ok) {
         setOpenAddMemberModal(false);
         setmMdalFinish(true);
         setMemberName('');
@@ -357,17 +357,18 @@ function Member_Team() {
         setMemberLevel('');
 
       }
-      else{
+      else {
         return response.json().then(err => {
           ;
         });
-      }}
-      ).then(data => {
-        console.log(data);
-      }).catch(error => {
-        
-        console.error('There was a problem with the fetch operation: ', error);
-      });
+      }
+    }
+    ).then(data => {
+      console.log(data);
+    }).catch(error => {
+
+      console.error('There was a problem with the fetch operation: ', error);
+    });
   };
   const handleAddTeamFetch = () => {
     const payload = {
@@ -375,7 +376,7 @@ function Member_Team() {
       manager,
       memberList,
     };
-    fetch('http://0.0.0.0:8081/work_load/add-team', {
+    fetch('http://0.0.0.0:8081/work-load/add-team', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -383,27 +384,28 @@ function Member_Team() {
       body: JSON.stringify(payload)
     }).then(response => {
       // 回傳成功
-      if (response.ok){
+      if (response.ok) {
         setOpenAddTeamModal(false);
         setTeamName('');
         setManager('');
         setMemberList([])
       }
-      else{
+      else {
         return response.json().then(err => {
           ;
         });
-      }}
-      ).then(data => {
-        console.log(data);
-      }).catch(error => {
-        console.error('There was a problem with the fetch operation: ', error);
-      });
+      }
+    }
+    ).then(data => {
+      console.log(data);
+    }).catch(error => {
+      console.error('There was a problem with the fetch operation: ', error);
+    });
   };
 
-  
+
   return (
-    <div style={{marginTop: "1%", marginLeft: "5%"}}>
+    <div style={{ marginTop: "1%", marginLeft: "5%" }}>
       <Menu pointing secondary style={{ width: '256px' }}>
         <Menu.Item
           style={{
@@ -425,7 +427,7 @@ function Member_Team() {
             borderBottomStyle: activeItem === 'MemberItem' ? 'solid' : 'none',
             minWidth: '0',
             paddingRight: '20px',
-            
+
           }}
           name='MemberItem'
           active={activeItem === 'MemberItem'}
@@ -440,36 +442,36 @@ function Member_Team() {
       {activeItem === 'TeamItem' ? (
         <div>
           <Button color='green'
-                  size="large"
-                  onClick={handleAddTeamClick}
-          > 
+            size="large"
+            onClick={handleAddTeamClick}
+          >
             新增團隊
           </Button>
-          <Card.Group itemsPerRow={3} stackable style={{ width: '95%', height: '100%', marginTop:"1%" }}>
+          <Card.Group itemsPerRow={3} stackable style={{ width: '95%', height: '100%', marginTop: "1%" }}>
             {teamCard.map((card, index) => (
-              <Card key={index} 
-                    fluid  
-                >
+              <Card key={index}
+                fluid
+              >
                 <Card.Content>
                   <Card.Header
                     style={{ fontSize: "25px", fontWeight: "bold", textAlign: "center" }}>
-                      {card.teamName}
+                    {card.teamName}
                   </Card.Header>
                 </Card.Content>
                 <Card.Content>
-                  <Grid textAlign="center" verticalAlign="middle" style={{fontSize:"35px"}}>
+                  <Grid textAlign="center" verticalAlign="middle" style={{ fontSize: "35px" }}>
                     <Grid.Column>
-                      <Icon name='users' size='huge' style={{fontSize:"55px"}}/>
-                        {card.memberCount}
-                      
+                      <Icon name='users' size='huge' style={{ fontSize: "55px" }} />
+                      {card.memberCount}
+
                     </Grid.Column>
                   </Grid>
                 </Card.Content>
-                
-                <Button fluid 
-                        color="blue"
-                        style={{ fontSize: "15px", fontWeight: "bold" }}
-                        onClick={() => setOpenCardAdd(true)}
+
+                <Button fluid
+                  color="blue"
+                  style={{ fontSize: "15px", fontWeight: "bold" }}
+                  onClick={() => setOpenCardAdd(true)}
                 >
                   新增成員
                 </Button>
@@ -480,86 +482,29 @@ function Member_Team() {
       ) : (
         <div>
           <Button color='green'
-                  size="large"
-                  onClick={handleAddMemberClick}
-          > 
+            size="large"
+            onClick={handleAddMemberClick}
+          >
             新增成員
           </Button>
-          <table className="ui  celled striped table" style={{width:"60%", marginTop:"2%"}}>
-            
-            
+          <table className="ui  celled striped table" style={{ width: "60%", marginTop: "2%" }}>
+
+
             <thead>
               <tr>
-                <th style={{width: "5%"}}> 成員</th>
-                <th style={{width: "5%"}}> 信箱</th>
-                <th style={{width: "10%"}}> 職稱</th>
-                <th style={{width: "5%"}}> 團隊</th>
-                
+                <th style={{ width: "5%" }}> 成員</th>
+                <th style={{ width: "5%" }}> 信箱</th>
+                <th style={{ width: "10%" }}> 職稱</th>
+                <th style={{ width: "5%" }}> 團隊</th>
+
               </tr>
             </thead>
             <tbody>
-            {allMember.map((item, index) => {
-             
-              return(
-                <tr key={index} style={{ fontWeight:"bold" }}>
-                  
-                  <td>
-                    <Grid >
-                      <Grid.Column width={1} style={{ marginRight: '0px' }}>
-                        <Image src={PhotoOptionsDict[item.memberPhoto]} alt={item.memberPhoto} size="mini" />
-                      </Grid.Column>
-                      <Grid.Column width={1} verticalAlign='middle'>
-                      </Grid.Column>
-                      <Grid.Column width={10} verticalAlign='middle'>
-                          {item.memberName}
-                      </Grid.Column>
-                    </Grid>
-                  </td>
-                  <td><a>{item.email}</a></td>
-                  <td>
-                    <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px'}} /> 
-                    {item.level}
-                  </td>
-                  <td>{item.teamName}</td>
-                </tr>
-                );
-              })}
-          </tbody>
-          </table>
-        </div>
-      )}
-      <Modal
-        size='small' 
-        onClose={() => setOpenCardAdd(false)}
-        onOpen={() => setOpenCardAdd(true)}
-        open={openCardAdd}
-      >
-        <Modal.Header>新增團隊成員</Modal.Header>
-        <Modal.Content style ={{width : "80%"}}>
-          <table className="ui  celled striped table" 
-              style={{
-              marginLeft :"-5%",
-              width: '100%'}}>
-            <thead>
-                    <tr><th colspan="3">
-                    當前成員列表
-                    </th>
-                </tr>
-            </thead>
-            <thead>
-                <tr>
-                  <th style={{width: "45%"}}> 成員</th>
-                  <th style={{width: "45%"}}> 職稱</th>
-                  <th style={{width: "5%"}}> 新增</th>
-                  
-                </tr>
-            </thead>
-              <tbody>
-              {teamMember.map((item, index) => {
-              
-                return(
-                  <tr key={index} style={{ fontWeight:"bold" }}>
-                    
+              {allMember.map((item, index) => {
+
+                return (
+                  <tr key={index} style={{ fontWeight: "bold" }}>
+
                     <td>
                       <Grid >
                         <Grid.Column width={1} style={{ marginRight: '0px' }}>
@@ -568,67 +513,126 @@ function Member_Team() {
                         <Grid.Column width={1} verticalAlign='middle'>
                         </Grid.Column>
                         <Grid.Column width={10} verticalAlign='middle'>
-                            {item.memberName}
+                          {item.memberName}
+                        </Grid.Column>
+                      </Grid>
+                    </td>
+                    <td><a>{item.email}</a></td>
+                    <td>
+                      <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px' }} />
+                      {item.level}
+                    </td>
+                    <td>{item.teamName}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <Modal
+        size='small'
+        onClose={() => setOpenCardAdd(false)}
+        onOpen={() => setOpenCardAdd(true)}
+        open={openCardAdd}
+      >
+        <Modal.Header>新增團隊成員</Modal.Header>
+        <Modal.Content style={{ width: "80%" }}>
+          <table className="ui  celled striped table"
+            style={{
+              marginLeft: "-5%",
+              width: '100%'
+            }}>
+            <thead>
+              <tr><th colspan="3">
+                當前成員列表
+              </th>
+              </tr>
+            </thead>
+            <thead>
+              <tr>
+                <th style={{ width: "45%" }}> 成員</th>
+                <th style={{ width: "45%" }}> 職稱</th>
+                <th style={{ width: "5%" }}> 新增</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {teamMember.map((item, index) => {
+
+                return (
+                  <tr key={index} style={{ fontWeight: "bold" }}>
+
+                    <td>
+                      <Grid >
+                        <Grid.Column width={1} style={{ marginRight: '0px' }}>
+                          <Image src={PhotoOptionsDict[item.memberPhoto]} alt={item.memberPhoto} size="mini" />
+                        </Grid.Column>
+                        <Grid.Column width={1} verticalAlign='middle'>
+                        </Grid.Column>
+                        <Grid.Column width={10} verticalAlign='middle'>
+                          {item.memberName}
                         </Grid.Column>
                       </Grid>
                     </td>
                     <td>
-                      <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px'}} /> 
+                      <Label circular color={levelsDict[item.level]} empty style={{ marginRight: '10px' }} />
                       {item.level}
                     </td>
                     <td>
-                        <Button
-                          fluid
-                          color={memberStatus[item.member_id] ? 'red' : 'green'}
-                          onClick={() => handleMemberIntoList(item.member_id)}
-                        >
-                          <Icon name={memberStatus[item.member_id] ? 'minus' : 'plus'}
-                                size="large" 
-                                style={{ marginRight: '0px'
-                                          }}/>
-                        </Button>
+                      <Button
+                        fluid
+                        color={memberStatus[item.member_id] ? 'red' : 'green'}
+                        onClick={() => handleMemberIntoList(item.member_id)}
+                      >
+                        <Icon name={memberStatus[item.member_id] ? 'minus' : 'plus'}
+                          size="large"
+                          style={{
+                            marginRight: '0px'
+                          }} />
+                      </Button>
 
-                      </td>
+                    </td>
                   </tr>
-                  );
-                })}
-              </tbody>
+                );
+              })}
+            </tbody>
 
-            </table>
-            
-          <Form  style={{
-              marginLeft :"-5%",
-              width: '100%'
-            }}>
-              
-                <Form.Field>
-                  <label>已選擇成员</label>
-                  <Dropdown
-                    placeholder=''
-                    fluid
-                    multiple
-                    selection
-                    options={selectedMemberOptions}
-                    //value={selectedMemberOptions}
-                    //onChange={e => setSelectedMember(e.target.value)}
-                    onChange={(e, { value }) => setSelectedMember(selectedMemberOptions)}
-                  />
-                </Form.Field>
-              <Form.Field>
-                <Checkbox 
-                  label='我已確認填寫內容無誤！絕對不會耍雷'
-                  onChange={()=>setIsTeamChecked(!isTeamChecked)} 
-                  tabIndex='0' 
-                />
-              </Form.Field>
-            </Form>
+          </table>
+
+          <Form style={{
+            marginLeft: "-5%",
+            width: '100%'
+          }}>
+
+            <Form.Field>
+              <label>已選擇成员</label>
+              <Dropdown
+                placeholder=''
+                fluid
+                multiple
+                selection
+                options={selectedMemberOptions}
+                //value={selectedMemberOptions}
+                //onChange={e => setSelectedMember(e.target.value)}
+                onChange={(e, { value }) => setSelectedMember(selectedMemberOptions)}
+              />
+            </Form.Field>
+            <Form.Field>
+              <Checkbox
+                label='我已確認填寫內容無誤！絕對不會耍雷'
+                onChange={() => setIsTeamChecked(!isTeamChecked)}
+                tabIndex='0'
+              />
+            </Form.Field>
+          </Form>
 
         </Modal.Content>
         <Modal.Actions>
           <Button color='black' onClick={() => {
             setOpenCardAdd(false);
             setIsTeamChecked(false);
-            
+
 
           }}>
             取消
@@ -645,13 +649,13 @@ function Member_Team() {
             }}
             positive
             disabled={!isTeamChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
         </Modal.Actions>
       </Modal>
       <Modal
         key={modalKey}
-        size='large' 
+        size='large'
         onClose={() => setOpenAddTeamModal(false)}
         onOpen={() => {
           setOpenAddTeamModal(true);
@@ -660,61 +664,61 @@ function Member_Team() {
         open={openAddTeamModal}
       >
         <Modal.Header>新增團隊</Modal.Header>
-        <Modal.Content style ={{width : "80%"}}>
-          <Form  style={{
-              marginLeft :"-5%",
-              width: '100%'
-            }}>
-              <Form.Group widths='equal'>
-                <Form.Input
-                  label="團隊名稱"
-                  name="chineseName"
-                  placeholder="FMCG產品部門"
-                  value={teamName}
-                  onChange={e => setTeamName(e.target.value)}
-                  width={4}
-                  required
-                  style={{fontWeight:"bold"}}
-                />
-                <Form.Field required width={4}>
-                  <label>主管</label>
-                  <Dropdown
-                    placeholder='manager name'
-                    fluid
-                    selection
-                    options={ManagerOptions}
-                    onChange={(e, { value }) => setManager(value)}
-                    style={{fontWeight:"bold"}}
-                  />
-                </Form.Field>
-              </Form.Group>
-              <Form.Field required>
-                <label>團隊成員(多選)</label>
+        <Modal.Content style={{ width: "80%" }}>
+          <Form style={{
+            marginLeft: "-5%",
+            width: '100%'
+          }}>
+            <Form.Group widths='equal'>
+              <Form.Input
+                label="團隊名稱"
+                name="chineseName"
+                placeholder="FMCG產品部門"
+                value={teamName}
+                onChange={e => setTeamName(e.target.value)}
+                width={4}
+                required
+                style={{ fontWeight: "bold" }}
+              />
+              <Form.Field required width={4}>
+                <label>主管</label>
                 <Dropdown
-                  placeholder='member name'
+                  placeholder='manager name'
                   fluid
-                  multiple
                   selection
-                  options={MemberOptions}
-                  onChange={(e, { value }) => setMemberList(value)}
+                  options={ManagerOptions}
+                  onChange={(e, { value }) => setManager(value)}
+                  style={{ fontWeight: "bold" }}
                 />
               </Form.Field>
+            </Form.Group>
+            <Form.Field required>
+              <label>團隊成員(多選)</label>
+              <Dropdown
+                placeholder='member name'
+                fluid
+                multiple
+                selection
+                options={MemberOptions}
+                onChange={(e, { value }) => setMemberList(value)}
+              />
+            </Form.Field>
 
-              <Form.Field>
-                <Checkbox 
-                  label='我已確認填寫內容無誤！絕對不會耍雷'
-                  onChange={()=>setIsTeamChecked(!isTeamChecked)} 
-                  tabIndex='0' 
-                />
-              </Form.Field>
-            </Form>
+            <Form.Field>
+              <Checkbox
+                label='我已確認填寫內容無誤！絕對不會耍雷'
+                onChange={() => setIsTeamChecked(!isTeamChecked)}
+                tabIndex='0'
+              />
+            </Form.Field>
+          </Form>
 
         </Modal.Content>
         <Modal.Actions>
           <Button color='black' onClick={() => {
             setOpenAddTeamModal(false);
             setIsTeamChecked(false);
-            
+
 
           }}>
             取消
@@ -731,83 +735,83 @@ function Member_Team() {
             }}
             positive
             disabled={!isTeamChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
         </Modal.Actions>
       </Modal>
       <Modal
-        size='small' 
+        size='small'
         onClose={() => setOpenAddMemberModal(false)}
         onOpen={() => setOpenAddMemberModal(true)}
         open={openAddMemberModal}
       >
         <Modal.Header>新增成員</Modal.Header>
-        <Modal.Content style ={{width : "80%"}}>
-          <Form  style={{
-              marginLeft :"-5%",
-              width: '100%'
-            }}>
-              <Form.Group widths='equal'>
-                <Form.Input
-                  label="英文姓名"
-                  name="memberName"
-                  placeholder="Marcus Tsai"
-                  value={memberName}
-                  onChange={e => setMemberName(e.target.value)}
-                  width={10}
-                  required
-                  style={{fontWeight:"bold"}}
-                />
-                <Form.Field required width={3}>
-                  <label>人像</label>
-                  <Dropdown
-                    placeholder='memberPhoto'
-                    fluid
-                    selection
-                    options={PhotoOptions}
-                    onChange={(e, { value }) => setMemberPhoto(value)}
-                    style={{fontWeight:"bold"}}
-                  />
-                </Form.Field>
-              </Form.Group>
-              <Form.Group widths='equal'>
-                <Form.Field required width={10}>
-                    <label>電子信箱</label>
-                    <Input
-                      label={<Dropdown defaultValue='@gmail.com'
-                                       options={emailOptions} 
-                                       style={{width:"140px"}}
-                                       onChange={(e, {value}) => setMemberEmailType(value)} 
-                              />}
-                      labelPosition='right'
-                      placeholder='Marcus Tsai'
-                      value={memberEmail}
-                      onChange={e => setMemberEmail(e.target.value)}
-                      style={{fontWeight:"bold"}}
-                    />
-                </Form.Field>
-                <Form.Field required width={3}>
-                  <label>職稱</label>
-                  <Dropdown
-                    placeholder='Level'
-                    fluid
-                    selection
-                    options={LevelOptions}
-                    onChange={(e, { value }) => setMemberLevel(value)}
-                    style={{fontWeight:"bold"}}
-                  />
-                </Form.Field>
-              </Form.Group>
-              
-
-              <Form.Field>
-                <Checkbox 
-                  label='我已確認填寫內容無誤！絕對不會耍雷'
-                  onChange={()=>setIsMemberChecked(!isMemberChecked)} 
-                  tabIndex='0' 
+        <Modal.Content style={{ width: "80%" }}>
+          <Form style={{
+            marginLeft: "-5%",
+            width: '100%'
+          }}>
+            <Form.Group widths='equal'>
+              <Form.Input
+                label="英文姓名"
+                name="memberName"
+                placeholder="Marcus Tsai"
+                value={memberName}
+                onChange={e => setMemberName(e.target.value)}
+                width={10}
+                required
+                style={{ fontWeight: "bold" }}
+              />
+              <Form.Field required width={3}>
+                <label>人像</label>
+                <Dropdown
+                  placeholder='memberPhoto'
+                  fluid
+                  selection
+                  options={PhotoOptions}
+                  onChange={(e, { value }) => setMemberPhoto(value)}
+                  style={{ fontWeight: "bold" }}
                 />
               </Form.Field>
-            </Form>
+            </Form.Group>
+            <Form.Group widths='equal'>
+              <Form.Field required width={10}>
+                <label>電子信箱</label>
+                <Input
+                  label={<Dropdown defaultValue='@gmail.com'
+                    options={emailOptions}
+                    style={{ width: "140px" }}
+                    onChange={(e, { value }) => setMemberEmailType(value)}
+                  />}
+                  labelPosition='right'
+                  placeholder='Marcus Tsai'
+                  value={memberEmail}
+                  onChange={e => setMemberEmail(e.target.value)}
+                  style={{ fontWeight: "bold" }}
+                />
+              </Form.Field>
+              <Form.Field required width={3}>
+                <label>職稱</label>
+                <Dropdown
+                  placeholder='Level'
+                  fluid
+                  selection
+                  options={LevelOptions}
+                  onChange={(e, { value }) => setMemberLevel(value)}
+                  style={{ fontWeight: "bold" }}
+                />
+              </Form.Field>
+            </Form.Group>
+
+
+            <Form.Field>
+              <Checkbox
+                label='我已確認填寫內容無誤！絕對不會耍雷'
+                onChange={() => setIsMemberChecked(!isMemberChecked)}
+                tabIndex='0'
+              />
+            </Form.Field>
+          </Form>
 
         </Modal.Content>
         <Modal.Actions>
@@ -829,7 +833,7 @@ function Member_Team() {
             }}
             positive
             disabled={!isMemberChecked}
-            style={{width:"120px"}}
+            style={{ width: "120px" }}
           />
         </Modal.Actions>
       </Modal>
@@ -841,11 +845,11 @@ function Member_Team() {
         buttons={buttons_2}
       />
 
-      
-    
 
-  </div>
-);
+
+
+    </div>
+  );
 }
 
 export default Member_Team;
